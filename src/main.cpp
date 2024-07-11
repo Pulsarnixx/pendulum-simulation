@@ -1,7 +1,12 @@
-#include <iostream>
+#include "core/systemhandler.hpp"
 
 int main(){
 
-    std::cout << "Hello engine!\n";
+    SystemHandler &system = SystemHandler::getSystem();
+    
+    if( system.Init() == true ) system.Run();
+    
+    system.Clean();
+
     return 0;
 }

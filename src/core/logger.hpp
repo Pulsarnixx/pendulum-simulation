@@ -7,6 +7,8 @@
 */
 #include <string>
 
+#define DEBUG_ON 
+
 enum LogLevel { DEBUG, INFO, ERROR };
 
 //Singleton
@@ -39,6 +41,7 @@ class Logger {
         std::string GetLogLevelString(LogLevel level);
         std::string GetCurrentTime();
         void ColorLogLevelString(std::string & loglevel);
+
 
 
 };

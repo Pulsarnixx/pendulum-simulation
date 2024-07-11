@@ -8,12 +8,12 @@
 #define WHITE   "\033[37m"
 
 Logger::Logger(){
-    printf("[LOGGER] Creating...\n");
+    printf("[LOGGER] Constructor\n");
     //TODO: Creating log file
 }
 
 Logger::~Logger(){
-    printf("[LOGGER] Deleting...\n");
+    printf("[LOGGER] Destructor\n");
 }
 
 std::string Logger::GetLogLevelString(LogLevel level){
@@ -50,12 +50,16 @@ void Logger::ColorLogLevelString(std::string & loglevel){
 }
 
 void Logger::log(LogLevel level, const std::string &mess){
-    
+ 
+
+#ifdef DEBUG_ON
     std::string timestamp   = GetCurrentTime();
     std::string levelString = GetLogLevelString(level);
     
     ColorLogLevelString(levelString);
 
-    fprintf(stdout,"[%s] %s:\t%s\n",timestamp.c_str(),levelString.c_str(),mess.c_str());
- 
+    fprintf(stdout,"[%s] %s: %s\n",timestamp.c_str(),levelString.c_str(),mess.c_str());
+#endif
+
+
 }
