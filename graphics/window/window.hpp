@@ -3,8 +3,6 @@
 //Forward dec.
 class GLFWwindow;
 
-
-
 class Window{
 
 public:
@@ -25,7 +23,8 @@ public:
     unsigned int GetHeight() const { return m_Height; }
     unsigned int GetWidth() const { return m_Width; }
     GLFWwindow* GetWindowGLFW() const { return m_Window; }
-
+    bool ShouldClose() const;
+    void onUpdate() const;
     // void SetHeight(unsigned int height) { m_Height = height; }
     // void SetWidth(unsigned int width) { m_Width = width; }
     // void SetWindowSize(unsigned int height, unsigned width) { m_Height = height; m_Width = width;} 
