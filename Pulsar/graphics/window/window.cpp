@@ -9,8 +9,6 @@
 
 Window::Window(){
 
-    printf("[WINDOW] Constructor\n");
-
     m_Window = glfwCreateWindow(DEFAULT_HEIGHT, DEFAULT_WEIGHT, "ExampleApp", NULL, NULL);
     m_Height = DEFAULT_HEIGHT;
     m_Width  = DEFAULT_WEIGHT;
@@ -18,8 +16,6 @@ Window::Window(){
 
 Window::~Window(){
     
-    printf("[WINDOW] Constructor\n");
-
     glfwDestroyWindow(m_Window);
     m_Window = nullptr;
 }

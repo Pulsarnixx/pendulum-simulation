@@ -8,8 +8,6 @@
 
 Gui::Gui(GLFWwindow* window){
 
-    printf("[GUI] Constructor\n");
-
     // // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -25,8 +23,6 @@ Gui::Gui(GLFWwindow* window){
 
 Gui::~Gui(){
     
-    printf("[GUI] Destructor\n");
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

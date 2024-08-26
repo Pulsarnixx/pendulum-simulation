@@ -2,6 +2,10 @@
 
 int main(){
 
+    Log::Init();
+
+    PX_CORE_WARN("Warning");
+
     pxGraphicsManager &gManager = pxGraphicsManager::getSystem();
     
     if( gManager.Init() == false ){

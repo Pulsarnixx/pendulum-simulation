@@ -1,7 +1,7 @@
 #pragma once
 
 //-------CORE----------------------
-#include "logger/logger.hpp"
+#include "log/log.hpp"
 //---------------------------------
 
 //-------GRAPHICS----------------------

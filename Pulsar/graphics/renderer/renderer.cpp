@@ -4,11 +4,9 @@
 #include <stdio.h>
 
 Renderer::Renderer(){
-    printf("[RENDERER] Constructor\n");
 };
 
 Renderer::~Renderer(){
-    printf("[RENDERER] Destructor\n");
 };
 
 void Renderer::OnRender() const{

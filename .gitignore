@@ -1,6 +1,7 @@
 #Directories
 .vscode/
 /build/
+/Licenses/
 
 #Files
 *.o

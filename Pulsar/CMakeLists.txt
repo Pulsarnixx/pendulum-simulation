@@ -1,3 +1,8 @@
+#------------SPDLOG--------------------------------
+set(SPDLOG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/spdlog/include)
+message(STATUS "[SPDLOG] include path:  ${SPDLOG_INCLUDE_DIR}")
+#------------------------------------------------
+
 #------------GLFW--------------------------------
 set(GLFW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include)
 message(STATUS "[GLFW] include path:  ${GLFW_INCLUDE_DIR}")
@@ -61,10 +66,10 @@ add_library( ${PROJECT_NAME} STATIC
              ${CORE_SOURCES} ${GRAPHICS_SOURCES}
 )
 
-target_include_directories( ${PROJECT_NAME} PUBLIC
-                            ${GLAD_INCLUDE_DIR}  ${GLFW_INCLUDE_DIR} 
-                            ${IMGUI_INCLUDE_DIR} ${IMGUI_BACKENDS_INCLUDE_DIR} 
-                            ${CORE_INCLUDE_PATH} ${GRAPHICS_INCLUDE_PATH}
+target_include_directories( ${PROJECT_NAME} PUBLIC ${SPDLOG_INCLUDE_DIR} 
+                            ${GLAD_INCLUDE_DIR}    ${GLFW_INCLUDE_DIR} 
+                            ${IMGUI_INCLUDE_DIR}   ${IMGUI_BACKENDS_INCLUDE_DIR} 
+                            ${CORE_INCLUDE_PATH}   ${GRAPHICS_INCLUDE_PATH}
 )
 
 target_link_libraries( ${PROJECT_NAME} PUBLIC
