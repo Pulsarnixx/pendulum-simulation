@@ -6,3 +6,7 @@
 	path = Pulsar/vendor/glfw
 	url = https://github.com/glfw/glfw.git
 	branch = 3.3-stable
+[submodule "Pulsar/vendor/imgui"]
+	path = Pulsar/vendor/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = docking
