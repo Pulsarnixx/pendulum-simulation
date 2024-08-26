@@ -1,0 +1,3 @@
+[submodule "Pulsar/vendor/spdlog"]
+	path = Pulsar/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
