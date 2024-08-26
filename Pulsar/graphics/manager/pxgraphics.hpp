@@ -1,5 +1,6 @@
 #pragma once
 
+//Forward dec.
 #include "window/window.hpp"
 #include "renderer/renderer.hpp"
 #include "widget/gui.hpp"
