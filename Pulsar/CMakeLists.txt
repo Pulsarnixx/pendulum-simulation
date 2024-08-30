@@ -1,22 +1,22 @@
 #------------SPDLOG--------------------------------
-set(SPDLOG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/spdlog/include)
+set(SPDLOG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/spdlog/include/)
 message(STATUS "[SPDLOG] include path:  ${SPDLOG_INCLUDE_DIR}")
 #------------------------------------------------
 
 #------------GLFW--------------------------------
-set(GLFW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include)
+set(GLFW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include/)
 message(STATUS "[GLFW] include path:  ${GLFW_INCLUDE_DIR}")
 #------------------------------------------------
 
 #------------GLAD--------------------------------
-set(GLAD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include)
+set(GLAD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include/)
 message(STATUS "[GLAD] include path:  ${GLAD_INCLUDE_DIR}")
 #------------------------------------------------
 
 #------------IMGUI--------------------------------
-set(IMGUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+set(IMGUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/)
 message(STATUS "[IMGUI] include Path: ${IMGUI_INCLUDE_DIR}")
-set(IMGUI_BACKENDS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends)
+set(IMGUI_BACKENDS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/)
 message(STATUS "[IMGUI] include Path: ${IMGUI_BACKENDS_INCLUDE_DIR}")
 #------------------------------------------------
 

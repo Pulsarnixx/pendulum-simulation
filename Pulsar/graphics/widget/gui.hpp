@@ -11,8 +11,8 @@ class Gui{
 
 public:
     //Constr, Destr.
-    Gui(GLFWwindow* window);
-    ~Gui();
+    Gui() = default;
+    ~Gui() = default;
 
     //Copy constr.
     Gui(Gui &) = delete;

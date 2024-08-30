@@ -7,8 +7,8 @@ class Renderer{
 
 public:
     //Constr, Destr.
-    Renderer();
-    ~Renderer();
+    Renderer() = default;
+    ~Renderer() = default;
 
     //Copy constr.
     Renderer(Renderer &) = delete;
@@ -18,7 +18,9 @@ public:
     Renderer(Renderer &&) = delete;
     Renderer& operator = (Renderer &&) = delete;
 
-    void OnRender() const;
+
+    void BeginRender() const;
+    void Render() const;
   
 private:
 

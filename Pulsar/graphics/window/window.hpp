@@ -1,5 +1,12 @@
 #pragma once
 
+#include <string>
+
+
+#define DEFAULT_HEIGHT 1080
+#define DEFAULT_WEIGHT 1920
+#define DEFAULT_TITLE  "Title"
+
 //Forward dec.
 class GLFWwindow;
 
@@ -8,7 +15,7 @@ class Window{
 public:
     //Constr, Destr.
     Window();
-    Window(unsigned int height, unsigned int width);
+    Window(unsigned int width, unsigned int height, const std::string& title);
     ~Window();
 
     //Copy constr.
@@ -20,19 +27,20 @@ public:
     Window& operator = (Window &&) = delete;
 
     //Access
+    GLFWwindow* GetWindowGLFW() const { return m_Window; }
+
     unsigned int GetHeight() const { return m_Height; }
     unsigned int GetWidth() const { return m_Width; }
-    GLFWwindow* GetWindowGLFW() const { return m_Window; }
-    bool ShouldClose() const;
+
+    bool ShouldWindowClose() const;
     void onUpdate() const;
-    // void SetHeight(unsigned int height) { m_Height = height; }
-    // void SetWidth(unsigned int width) { m_Width = width; }
-    // void SetWindowSize(unsigned int height, unsigned width) { m_Height = height; m_Width = width;} 
+    void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
 private:
 
-    unsigned int m_Height;
-    unsigned int m_Width;
     GLFWwindow* m_Window;
+    unsigned int m_Width;
+    unsigned int m_Height;
+    std::string  m_Title;
 
 
 };

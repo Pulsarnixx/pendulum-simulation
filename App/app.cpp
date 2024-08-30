@@ -2,45 +2,39 @@
 
 int main(){
 
-    Log::Init();
+    PX_LOG::Init();
 
-    PX_CORE_WARN("Warning");
+    PX::Init();
 
-    pxGraphicsManager &gManager = pxGraphicsManager::getSystem();
-    
-    if( gManager.Init() == false ){
-        gManager.Clean();
-        return -1;
-    } 
-    
-    Window *window = gManager.GetWindow();
-    Renderer *renderer = gManager.GetRenderer();
-    Gui *gui = gManager.GetGui();
+    const Window* window = PX::GetWindow();
+    const Renderer* renderer = PX::GetRenderer();
+    const Gui* gui = PX::GetGui();
 
 
-    if (window == nullptr || renderer == nullptr || gui == nullptr) {
-        gManager.Clean();
-        return -1;
+    while (!window->ShouldWindowClose())
+    {
+        //Event handler - in the future
+
+        renderer->BeginRender();
+        /*
+            Calculation...
+
+            Rendering staff...
+        */
+        //GUI - in the future
+        
+        gui->OnBegin();
+        /*
+            Customizing gui...
+        */
+        gui->OnEnd();
+        
+        window->onUpdate();
     }
 
-    while (!window->ShouldClose())
-    {
-        // input / events
+
+    PX::ShutDown();
 
 
-        //Imgui on begin
-        gui->OnBegin();
-  
-        // render
-        renderer->OnRender();
-
-        // //Imgui on end
-        gui->OnEnd();
-
-        window->onUpdate();
-    } 
-    
-   
-    gManager.Clean();
     return 0;
 }

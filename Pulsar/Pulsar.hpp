@@ -2,8 +2,10 @@
 
 //-------CORE----------------------
 #include "log/log.hpp"
+#define PX_LOG Log
 //---------------------------------
 
 //-------GRAPHICS----------------------
-#include "manager/pxgraphics.hpp"
+#include "system.hpp"
+#define PX System
 //---------------------------------

@@ -1,18 +1,25 @@
 #include "window.hpp"
+
+#include "glad.h"
 #include <GLFW/glfw3.h>
-
-#define DEFAULT_HEIGHT 1920
-#define DEFAULT_WEIGHT 1090
-
-
-#include <stdio.h>
 
 Window::Window(){
 
-    m_Window = glfwCreateWindow(DEFAULT_HEIGHT, DEFAULT_WEIGHT, "ExampleApp", NULL, NULL);
-    m_Height = DEFAULT_HEIGHT;
+    m_Window = glfwCreateWindow(DEFAULT_WEIGHT, DEFAULT_HEIGHT, DEFAULT_TITLE, NULL, NULL);
     m_Width  = DEFAULT_WEIGHT;
+    m_Height = DEFAULT_HEIGHT;
+    m_Title  = DEFAULT_TITLE;
+
 }
+
+Window::Window(unsigned int width, unsigned int height, const std::string& title){
+
+    m_Window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    m_Width  = DEFAULT_WEIGHT;
+    m_Height = DEFAULT_HEIGHT;
+    m_Title  = title.c_str();
+}
+
 
 Window::~Window(){
     
@@ -20,8 +27,18 @@ Window::~Window(){
     m_Window = nullptr;
 }
 
-bool Window::ShouldClose() const { return glfwWindowShouldClose(m_Window); }
+bool Window::ShouldWindowClose() const { return glfwWindowShouldClose(m_Window); }
 
 void Window::onUpdate() const { glfwSwapBuffers(m_Window); glfwPollEvents();} // glfwPollEvents should be for Event manager
 
+void Window::SetWindowDetails(unsigned int width, unsigned int height, const std::string& title){
+
+    if(m_Window == nullptr) 
+        return;
+
+    glfwSetWindowSize(m_Window, width, height);
+    glViewport(0,0,width,height);
+
+    glfwSetWindowTitle(m_Window,title.c_str());
+ }
 
