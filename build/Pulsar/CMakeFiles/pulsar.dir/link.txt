@@ -1,0 +1,2 @@
+/usr/bin/ar qc libpulsar.a CMakeFiles/pulsar.dir/core/log/log.cpp.o CMakeFiles/pulsar.dir/core/timer/timer.cpp.o CMakeFiles/pulsar.dir/graphics/renderer/renderer.cpp.o CMakeFiles/pulsar.dir/graphics/system.cpp.o CMakeFiles/pulsar.dir/graphics/widget/gui.cpp.o CMakeFiles/pulsar.dir/graphics/window/window.cpp.o
+/usr/bin/ranlib libpulsar.a

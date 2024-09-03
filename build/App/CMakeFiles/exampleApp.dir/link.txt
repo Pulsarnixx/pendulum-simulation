@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wall -pedantic CMakeFiles/exampleApp.dir/app.cpp.o -o exampleApp  ../Pulsar/libpulsar.a ../Pulsar/vendor/glad/libglad.a ../Pulsar/vendor/glfw/src/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl ../Pulsar/vendor/imgui/libimgui.a 
