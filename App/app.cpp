@@ -3,6 +3,8 @@
 int main(){
 
     PX_LOG::Init();
+    Timer::Init();
+
 
     PX::Init();
 
@@ -15,7 +17,12 @@ int main(){
     {
         //Event handler - in the future
 
+        PX_CORE_TIMER_START();
+
         renderer->BeginRender();
+        PX_CORE_TIMER_STOP_MILI("Rendering");
+
+
         /*
             Calculation...
 
@@ -30,6 +37,7 @@ int main(){
         gui->OnEnd();
         
         window->onUpdate();
+
     }
 
 

@@ -2,6 +2,7 @@
 
 //-------CORE----------------------
 #include "log/log.hpp"
+#include "timer/timer.hpp"
 #define PX_LOG Log
 //---------------------------------
 
