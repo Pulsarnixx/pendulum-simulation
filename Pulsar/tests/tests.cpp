@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
 
+/*
+    Temporary simple test config.
+    It will be implemented later during matematicial 
+    operation and manipulation
 
+*/
 int Factorial(int n){
     if(n == 0) return 1;
 
