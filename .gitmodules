@@ -1,7 +1,6 @@
 [submodule "Pulsar/vendor/spdlog"]
 	path = Pulsar/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
-	
 [submodule "Pulsar/vendor/glfw"]
 	path = Pulsar/vendor/glfw
 	url = https://github.com/glfw/glfw.git
@@ -10,3 +9,6 @@
 	path = Pulsar/vendor/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "Pulsar/vendor/googletest"]
+	path = Pulsar/vendor/googletest
+	url = https://github.com/google/googletest.git

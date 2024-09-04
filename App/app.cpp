@@ -3,7 +3,7 @@
 int main(){
 
     PX_LOG::Init();
-    Timer::Init();
+    PX_TIMER::Init();
 
 
     PX::Init();

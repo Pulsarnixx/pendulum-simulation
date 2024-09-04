@@ -12,3 +12,6 @@ message(STATUS "[PULSARENGINE] Engine include path: ${PULSAR_INCLUDE_PATH}")
 
 add_subdirectory(Pulsar)
 add_subdirectory(App)
+
+#Enable testing after Pulsar/vendor/googletest configure
+enable_testing()

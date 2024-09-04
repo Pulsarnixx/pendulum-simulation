@@ -15,10 +15,15 @@ message(STATUS "[GLAD] include path:  ${GLAD_INCLUDE_DIR}")
 
 #------------IMGUI--------------------------------
 set(IMGUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/)
-message(STATUS "[IMGUI] include Path: ${IMGUI_INCLUDE_DIR}")
+message(STATUS "[IMGUI] include path: ${IMGUI_INCLUDE_DIR}")
 set(IMGUI_BACKENDS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/)
-message(STATUS "[IMGUI] include Path: ${IMGUI_BACKENDS_INCLUDE_DIR}")
+message(STATUS "[IMGUI] include path: ${IMGUI_BACKENDS_INCLUDE_DIR}")
 #------------------------------------------------
+
+#------------GTEST--------------------------------
+set(GTEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/googletest/googletest/include/)
+message(STATUS "[GTEST] include path: ${GTEST_INCLUDE_DIR}")
+#-------------------------------------------------
 
 add_subdirectory(vendor)
 
@@ -60,6 +65,12 @@ message(STATUS "Found header files:")
 foreach(file ${GRAPHICS_HEADERS})
     message(STATUS "  ${file}")
 endforeach()
+#------------------------------------------------
+
+#----Unit testing--------------------------------
+add_executable(tests tests/tests.cpp)
+target_include_directories(tests PUBLIC ${GTEST_INCLUDE_DIR})
+target_link_libraries(tests gtest_main)
 #------------------------------------------------
 
 add_library( ${PROJECT_NAME} STATIC
