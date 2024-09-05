@@ -2,11 +2,14 @@
 .vscode/
 /build/
 /Licenses/
-
+/bin/
+/data/
 #Files
 *.o
 *.obj
 *.out
 *.exe
+*.sh
+*.ini
 
 

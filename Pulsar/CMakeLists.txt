@@ -71,6 +71,9 @@ endforeach()
 add_executable(tests tests/tests.cpp)
 target_include_directories(tests PUBLIC ${GTEST_INCLUDE_DIR})
 target_link_libraries(tests gtest_main)
+set_target_properties( tests PROPERTIES 
+                       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/Pulsar/tests"
+                    )
 #------------------------------------------------
 
 add_library( ${PROJECT_NAME} STATIC
