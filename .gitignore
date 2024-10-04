@@ -4,6 +4,7 @@
 /Licenses/
 /bin/
 /data/
+/scripts/
 #Files
 *.o
 *.obj
