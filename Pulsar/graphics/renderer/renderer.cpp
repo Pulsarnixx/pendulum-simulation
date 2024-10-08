@@ -9,3 +9,8 @@ void Renderer::BeginRender() const {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void Renderer::Render() const{
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+}
+

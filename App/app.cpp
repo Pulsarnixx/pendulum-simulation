@@ -13,67 +13,9 @@ int main(){
     const Renderer* renderer = PX::GetRenderer();
     const Gui* gui = PX::GetGui();
 
-    ShaderSource src;
     std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shader_prog.txt";
-
-    src = ReadGLSLFromFile(file_path);
-
-    const char *vertexShaderSource = src.s_vertexSource.c_str();
-    // PX_CORE_INFO("Vertex Shader");
-    // PX_CORE_INFO(vertexShaderSource);
-    const char *fragmentShaderSource = src.s_fragmentSource.c_str();
-    // PX_CORE_INFO("Fragment Shader");
-    // PX_CORE_INFO(fragmentShaderSource);
-   
-
-    //Create shader program
-    unsigned int shaderProgram = glCreateProgram();
-    if (shaderProgram == 0)
-        PX_CORE_ERROR("Shader program cretion failed!\n");
-    
-    //Create shaders
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    if(vertexShader == 0 || fragmentShader == 0)
-        PX_CORE_ERROR("Shader objects cretion failed!\n");
-
-    //Compile shaders
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    //Check if compilation complete
-    int compilationFlag; 
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &compilationFlag);
-    if(compilationFlag != GL_TRUE){
-        PX_CORE_ERROR("Vertex shader compilation failed!\n");
-        return -1;
-    }
-    
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    //Check if compilation complete
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &compilationFlag);
-    if(compilationFlag != GL_TRUE){
-        PX_CORE_ERROR("Vertex shader compilation failed!\n");
-        return -1;
-    }
-
-    //Attach shaders to program
-    glAttachShader(shaderProgram,vertexShader);
-    glAttachShader(shaderProgram,fragmentShader);
-
-    //Link program
-    glLinkProgram(shaderProgram);
-
-    //Use shader program
-    glUseProgram(shaderProgram);
-
-    //Delete uncessesary shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    //TODO
+    Shader mainShader(file_path);
+    mainShader.Bind();
 
     float vertices[] = {
          0.5f,  0.5f, 0.0f,  // top right
@@ -126,9 +68,8 @@ int main(){
         //Rendering staff...
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
-
+        renderer->Render();
         //GUI adjustment
         
         gui->OnBegin();
@@ -144,7 +85,6 @@ int main(){
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
 
 
     PX::ShutDown();
