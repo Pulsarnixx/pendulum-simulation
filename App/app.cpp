@@ -1,35 +1,30 @@
 #include "Pulsar.hpp"
 
-//Temp - 
-#include "glad.h"
+#include "glad.h" //Temporary, when everything will be encapsulated - then delete.
 
 int main(){
 
     PX_LOG::Init();
     PX_TIMER::Init();
-
-
+    
     PX::Init();
 
     const Window* window = PX::GetWindow();
     const Renderer* renderer = PX::GetRenderer();
     const Gui* gui = PX::GetGui();
 
-    /*
-        TODO
-    */
-    const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-    const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
+    ShaderSource src;
+    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shader_prog.txt";
+
+    src = ReadGLSLFromFile(file_path);
+
+    const char *vertexShaderSource = src.s_vertexSource.c_str();
+    // PX_CORE_INFO("Vertex Shader");
+    // PX_CORE_INFO(vertexShaderSource);
+    const char *fragmentShaderSource = src.s_fragmentSource.c_str();
+    // PX_CORE_INFO("Fragment Shader");
+    // PX_CORE_INFO(fragmentShaderSource);
+   
 
     //Create shader program
     unsigned int shaderProgram = glCreateProgram();

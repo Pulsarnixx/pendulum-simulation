@@ -10,5 +10,6 @@
 
 //-------GRAPHICS----------------------
 #include "system.hpp"
+#include "renderer/shader.hpp"
 #define PX System
 //---------------------------------
