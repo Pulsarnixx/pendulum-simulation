@@ -1,5 +1,8 @@
 #pragma once
 
+//Forward dec.
+class VertexBuffer;
+class VertexBufferLayout;
 
 /*
     Class represents vertex array object
@@ -14,7 +17,7 @@ public:
         //Utilities
         void Bind() const;
         void UnBind() const;
-        // void AddBuffer(const VertexBuffer& buffer, const VertexBufferLayout& layout);
+        void AddBuffer(const VertexBuffer& buffer, const VertexBufferLayout& layout);
 
 private:
         unsigned int m_ID;

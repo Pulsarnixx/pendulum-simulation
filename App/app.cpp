@@ -13,9 +13,6 @@ int main(){
     const Renderer* renderer = PX::GetRenderer();
     const Gui* gui = PX::GetGui();
 
-    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shader_prog.txt";
-    Shader mainShader(file_path);
-    mainShader.Bind();
 
     float vertices[] = {
          0.5f,  0.5f, 0.0f,  // top right
@@ -27,30 +24,28 @@ int main(){
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
     };
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //Buffers / containers
+    VertexArray  vao;
+    VertexBuffer vbo(vertices, 3 * 4 * sizeof(float) );
+    IndexBuffer  ebo(indices,  3 * 2);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //Vertex attributes
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    //Add everything to one container - vao
+    vao.AddBuffer(vbo, layout);
 
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    //Unbind everything (buffers are not needed, vao will be changed in loop)
+    vao.UnBind();
+    vbo.UnBind();
+    //Unbind index buffer only when vao is unbind.
+    ebo.UnBind();
 
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    //Unbind VAO
-    glBindVertexArray(0); 
+    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shader_prog.txt";
+    Shader mainShader(file_path);
+    mainShader.Bind();
 
     while (!window->ShouldWindowClose())
     {
@@ -61,14 +56,12 @@ int main(){
         renderer->BeginRender();
         // PX_CORE_TIMER_STOP_MILI("Rendering");
 
-
-        
         //Calculation...
 
         //Rendering staff...
+        vao.Bind();
+        ebo.Bind();
 
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        
         renderer->Render();
         //GUI adjustment
         
@@ -82,13 +75,6 @@ int main(){
 
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-
-
     PX::ShutDown();
-
-
     return 0;
 }

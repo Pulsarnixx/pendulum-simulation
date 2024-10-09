@@ -11,5 +11,9 @@
 //-------GRAPHICS----------------------
 #include "system.hpp"
 #include "renderer/shader.hpp"
+#include "renderer/core/VertexArray.hpp"
+#include "renderer/core/VertexBuffer.hpp"
+#include "renderer/core/VertexBufferLayout.hpp"
+#include "renderer/core/IndexBuffer.hpp"
 #define PX System
 //---------------------------------
