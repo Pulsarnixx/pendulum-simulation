@@ -10,10 +10,17 @@
 
 //-------GRAPHICS----------------------
 #include "system.hpp"
+#define PX System
+
 #include "renderer/shader.hpp"
+
+//GRAPHICS CORE
 #include "renderer/core/VertexArray.hpp"
 #include "renderer/core/VertexBuffer.hpp"
 #include "renderer/core/VertexBufferLayout.hpp"
 #include "renderer/core/IndexBuffer.hpp"
-#define PX System
+#include "renderer/core/Textures.hpp"
+
+//GRAPHICS PRIMITIVES
+#include "renderer/primitives/Cube.hpp"
 //---------------------------------
