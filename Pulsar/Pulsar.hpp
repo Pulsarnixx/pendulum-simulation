@@ -19,6 +19,7 @@
 #include "renderer/core/VertexBuffer.hpp"
 #include "renderer/core/VertexBufferLayout.hpp"
 #include "renderer/core/IndexBuffer.hpp"
+#include "renderer/core/Textures.hpp"
 
 //GRAPHICS PRIMITIVES
 #include "renderer/primitives/Cube.hpp"

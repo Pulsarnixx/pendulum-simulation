@@ -34,10 +34,20 @@ int main(){
     //Unbind index buffer only when vao is unbind.
     ebo.UnBind();
 
-    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shader_prog.txt";
+    /*
+        SHADERS
+    */
+    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shaders/shader_prog.txt";
     Shader mainShader(file_path);
     mainShader.Bind();
 
+    /*
+        TEXTURES
+    */
+    file_path = "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg";
+    Texture2D texture1(file_path);
+    texture1.Bind();
+    //shader1.SetUniform1i("u_texture1",0); -- TODO, ADD UNIFORMS
     
     while (!window->ShouldWindowClose())
     {
