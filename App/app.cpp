@@ -14,21 +14,12 @@ int main(){
     const Gui* gui = PX::GetGui();
 
 
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
+    class Cube cube1;
 
     //Buffers / containers
     VertexArray  vao;
-    VertexBuffer vbo(vertices, 3 * 4 * sizeof(float) );
-    IndexBuffer  ebo(indices,  3 * 2);
+    VertexBuffer vbo(cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize() );
+    IndexBuffer  ebo(cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize());
 
     //Vertex attributes
     VertexBufferLayout layout;
@@ -47,6 +38,7 @@ int main(){
     Shader mainShader(file_path);
     mainShader.Bind();
 
+    
     while (!window->ShouldWindowClose())
     {
         //Event handler - in the future
