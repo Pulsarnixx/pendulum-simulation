@@ -5,16 +5,21 @@
 
 //Constr. & destr.
 Texture2D::Texture2D(const std::string& filepath)
-    :m_ID(0),m_FilePath(filepath), m_CacheImageBuffer(nullptr), 
+    :m_ID(0),m_FilePath(filepath), 
     m_Width(0), m_Height(0),m_BytesPerPixel(0)
 {
     //Optional - depands on image format
     stbi_set_flip_vertically_on_load(1);
-    m_CacheImageBuffer = stbi_load(filepath.c_str(),&m_Width,&m_Height,&m_BytesPerPixel,4);
+    unsigned char* CacheImageBuffer = stbi_load(filepath.c_str(),&m_Width,&m_Height,&m_BytesPerPixel,4);
 
     //Prepare OpenGL texture object
     glGenTextures(1,&m_ID);
     glBindTexture(GL_TEXTURE_2D,m_ID);
+
+
+    /*
+        Texture configuration
+    */
 
     //Texture Filtering
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -23,14 +28,14 @@ Texture2D::Texture2D(const std::string& filepath)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);  //x
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);  //y
   
-    //Copy data to OpenGL texture object
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,m_Width,m_Height,0,GL_RGBA,GL_UNSIGNED_BYTE,m_CacheImageBuffer);
-
+    //Copy data from cached to texture object
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,m_Width,m_Height,0,GL_RGBA,GL_UNSIGNED_BYTE,CacheImageBuffer);
+    
     glBindTexture(GL_TEXTURE_2D,0);
 
-    //Optional
-    if(m_CacheImageBuffer)
-        stbi_image_free(m_CacheImageBuffer);
+    //Optional - deletion data, because they are saved in OpenGL Texture2D object
+    if(CacheImageBuffer)
+        stbi_image_free(CacheImageBuffer);
 
 }
 

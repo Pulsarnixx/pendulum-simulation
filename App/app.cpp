@@ -1,6 +1,7 @@
 #include "Pulsar.hpp"
 
 #include "glad.h" //Temporary, when everything will be encapsulated - then delete.
+#include <iostream>
 
 int main(){
 
@@ -24,6 +25,7 @@ int main(){
     //Vertex attributes
     VertexBufferLayout layout;
     layout.Push<float>(3);
+    layout.Push<float>(2);
 
     //Add everything to one container - vao
     vao.AddBuffer(vbo, layout);
@@ -50,8 +52,8 @@ int main(){
     file_path = "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg";
     Texture2D texture1(file_path);
     texture1.Bind();
-    printf("Texture loaded size: %d x %d\n", texture1.GetWidth(), texture1.GetHeight());
-    
+
+   
     while (!window->ShouldWindowClose())
     {
         //Event handler - in the future

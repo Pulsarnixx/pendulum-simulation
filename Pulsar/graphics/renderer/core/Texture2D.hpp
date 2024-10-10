@@ -18,12 +18,13 @@ public:
 
         inline int GetWidth() const { return m_Width; }
         inline int GetHeight() const { return m_Height; }
+        // inline unsigned char* GetCachedImagePtr() const { return m_CacheImageBuffer; }
 
 
 private:
         unsigned int m_ID;
         std::string m_FilePath;
-        unsigned char* m_CacheImageBuffer;
         int m_Width, m_Height, m_BytesPerPixel;
+        // unsigned char* m_CacheImageBuffer; - option, can be cached
 
 };//class Texture2D

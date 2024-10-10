@@ -13,7 +13,7 @@ public:
     
     //Utilities
         static const void* GetVerticesArrayData() {return m_Vertices;}
-        static const unsigned int GetVerticesArraySize() {return 3 * 8 * sizeof(float);}
+        static const unsigned int GetVerticesArraySize() {return 5 * 8 * sizeof(float);}
 
         static const unsigned int* GetIndicatesArrayData() {return m_Indices;}
         static const unsigned int GetIndicatesArraySize() {return 36 * sizeof(unsigned int);}
@@ -22,7 +22,7 @@ private:
 
 //Data
         //Declaration
-        static const float m_Vertices[3 * 8];
+        static const float m_Vertices[5 * 8];
         static const unsigned int m_Indices[36];
 
 
@@ -32,17 +32,18 @@ private:
 
 
 //Definition static fields
-const float Cube::m_Vertices[3 * 8] = {
+const float Cube::m_Vertices[5 * 8] = {
 
-     //position        
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f
+     //position             //texture
+    -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,  
+     0.5f, -0.5f, -0.5f,   1.0f, 0.0f,  
+     0.5f,  0.5f, -0.5f,   1.0f, 1.0f,  
+    -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,  
+
+    -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,   0.0f, 1.0f 
 };
 
 const unsigned int Cube::m_Indices[36] = {
