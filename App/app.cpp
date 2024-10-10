@@ -38,8 +38,11 @@ int main(){
         SHADERS
     */
     std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shaders/shader_prog.txt";
-    Shader mainShader(file_path);
-    mainShader.Bind();
+    Shader shaderProgram(file_path);
+    shaderProgram.Bind();
+
+    //Bind shaderProgram first
+    shaderProgram.SetUniform4f("u_color", 1.0f, 0.984f, 0.0f, 1.0f );
 
     /*
         TEXTURES
@@ -47,7 +50,7 @@ int main(){
     file_path = "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg";
     Texture2D texture1(file_path);
     texture1.Bind();
-    //shader1.SetUniform1i("u_texture1",0); -- TODO, ADD UNIFORMS
+    printf("Texture loaded size: %d x %d\n", texture1.GetWidth(), texture1.GetHeight());
     
     while (!window->ShouldWindowClose())
     {
