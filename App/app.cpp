@@ -51,17 +51,31 @@ int main(){
     */
     file_path = "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg";
     Texture2D texture1(file_path);
-    texture1.Bind();
+    texture1.Bind(); //choose slot
 
-   
+
+    unsigned int frames = 0;
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
+    std::chrono::time_point<std::chrono::steady_clock> endTime;
+    std::chrono::duration<double> elapsedTime(0);
+
+
     while (!window->ShouldWindowClose())
     {
-        //Event handler - in the future
 
-        // PX_CORE_TIMER_START();
+        /*
+            START MEASURING APP FRAMERATE
+        */
+        startTime = std::chrono::steady_clock::now();
+        frames++;
+
+     
+
+
+        //Event handler - in the future
+        window->onEvents();
 
         renderer->BeginRender();
-        // PX_CORE_TIMER_STOP_MILI("Rendering");
 
         //Calculation...
 
@@ -69,8 +83,22 @@ int main(){
         vao.Bind();
         ebo.Bind();
 
+   
+
+        /*
+            START MEASURING RENDER FRAME TIME
+        */
+
+        //Force GPU to end rendering task from SwapBuffer before measuring performance
+       
+
+        // PX_CORE_TIMER_GL_MILI("Render()", renderer->Render(););
         renderer->Render();
-        //GUI adjustment
+
+        /*
+            STOP MEASURING RENDER FRAME TIME
+        */  
+     
         
         gui->OnBegin();
         /*
@@ -80,6 +108,23 @@ int main(){
         
         window->onUpdate();
 
+        /*
+            STOP MEASURING APP FRAMERATE
+        */
+
+        endTime = std::chrono::steady_clock::now();
+        elapsedTime += endTime - startTime;
+        
+        if(elapsedTime.count() >= 1.0){
+
+            double elapsedMili = elapsedTime.count() * 1000;
+            std::string s = "FPS: " + std::to_string(frames) + " | Frame time (avg): " + std::to_string( (elapsedMili / frames)) + " ms";
+            PX_CORE_TRACE(s);
+
+
+            frames = 0;
+            elapsedTime = std::chrono::duration<double>(0);
+        }
     }
 
     PX::ShutDown();
