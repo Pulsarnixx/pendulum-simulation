@@ -2,9 +2,8 @@
 
 //-------CORE----------------------
 #include "log/log.hpp"
-#include "timer/timer.hpp"
+#include "timers/TimeManager.hpp"
 
-#define PX_TIMER Timer
 #define PX_LOG Log
 //---------------------------------
 
