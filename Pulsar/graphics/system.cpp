@@ -81,6 +81,7 @@ void System::Init(){
     
     GLFWwindow* currentWindow = m_Window->GetWindowGLFW();
     glfwMakeContextCurrent(currentWindow);
+     glfwSwapInterval( 0 );
 
     //Load OpenGL context
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){

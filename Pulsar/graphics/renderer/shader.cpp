@@ -3,6 +3,7 @@
 #include <fstream> //ifstream
 #include <sstream> //stringstream
 #include "glad.h"  //gl functions
+//#include <glm> in the future
 
 //ShaderSource definition
 struct ShaderSource{
@@ -30,6 +31,27 @@ void Shader::Bind() const {
 void Shader::UnBind() const {
     glUseProgram(0);
 }
+
+void Shader::SetUniform1i(const std::string& name, int v0){
+    int location = GetUniformLocation(name);
+
+    if(location != -1)
+        glUniform1i(location, v0);
+}
+void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3 ){
+    int location = GetUniformLocation(name);
+
+    if(location != -1)
+        glUniform4f(location, v0, v1, v2, v3);
+}
+
+// void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& m1){
+//     int location = GetUniformLocation(name);
+
+//     if(location != -1)
+//         glUniformMatrix4fv(location,1,false,&m1[0][0]);
+
+// }
 
 //Private
 
@@ -110,6 +132,22 @@ ShaderSource Shader::ReadGLSLFromFile(const std::string& filepath){
     }
 
     return {ss[0].str(),ss[1].str()};
+}
+
+int Shader::GetUniformLocation(const std::string& name){
+
+    //First check cache
+    if(m_CachedUniformLocations.find(name) != m_CachedUniformLocations.end())
+        return m_CachedUniformLocations[name];
+
+    //Then check in shader code
+    int location = glGetUniformLocation(m_ID, name.c_str());
+
+    //Cache new uniform
+    if(location >= 0)
+        m_CachedUniformLocations[name] = location;
+
+    return location;//location values will be check during setting values
 }
 
 

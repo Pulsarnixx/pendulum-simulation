@@ -33,6 +33,7 @@ public:
     unsigned int GetWidth() const { return m_Width; }
 
     bool ShouldWindowClose() const;
+    void onEvents() const;
     void onUpdate() const;
     void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
 private:
