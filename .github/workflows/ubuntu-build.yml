@@ -17,8 +17,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        submodules: true    #for glfw, imgui, spdlog and gtest submodules
+        fetch-depth: 0
 
-    - name: Set up C++ (or any other environment, e.g. Python)
+    - name: Install essential tools
       run: sudo apt-get install build-essential cmake xorg-dev
 
     - name: Build
