@@ -1,7 +1,7 @@
 #include "Pulsar.hpp"
 
-#include "glad.h" //Temporary, when everything will be encapsulated - then delete.
-#include <iostream>
+#define EXAMPLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/shader_prog.txt"
+#define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg"
 
 int main(){
 
@@ -18,6 +18,8 @@ int main(){
     const Renderer* renderer = PX::GetRenderer();
     const Gui* gui = PX::GetGui();
 
+    //Window option
+    window->SetVsync(false);
 
     class Cube cube1;
 
@@ -43,7 +45,7 @@ int main(){
     /*
         SHADERS
     */
-    std::string file_path = "/home/marek/Dev/Projects/pulsarEngine/res/shaders/shader_prog.txt";
+    std::string file_path = EXAMPLE_SHADER;
     Shader shaderProgram(file_path);
     shaderProgram.Bind();
 
@@ -53,16 +55,9 @@ int main(){
     /*
         TEXTURES
     */
-    file_path = "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg";
+    file_path = EXAMPLE_TEXTURE;
     Texture2D texture1(file_path);
     texture1.Bind(); //choose slot
-
-
-    // unsigned int frames = 0;
-    // std::chrono::time_point<std::chrono::steady_clock> startTime;
-    // std::chrono::time_point<std::chrono::steady_clock> endTime;
-    // std::chrono::duration<double> elapsedTime(0);
-
 
     while (!window->ShouldWindowClose())
     {
@@ -70,9 +65,6 @@ int main(){
         /*
             START MEASURING APP FRAMERATE
         */
-        // startTime = std::chrono::steady_clock::now();
-        // frames++;
-
         FPSTimer::GetTimer()->StartFrame();
 
 
