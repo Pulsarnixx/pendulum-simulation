@@ -1,0 +1,25 @@
+name: ubuntu-build
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up C++ (or any other environment, e.g. Python)
+      run: sudo apt-get install build-essential cmake xorg-dev
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . -j
