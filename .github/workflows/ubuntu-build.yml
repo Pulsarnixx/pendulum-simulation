@@ -1,0 +1,33 @@
+name: ubuntu-build
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true    #for glfw, imgui, spdlog and gtest submodules
+        fetch-depth: 0
+
+    - name: Install essential tools
+      run: sudo apt-get install build-essential cmake xorg-dev
+           libwayland-dev libxkbcommon-dev wayland-protocols extra-cmake-modules
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . -j
