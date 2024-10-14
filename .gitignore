@@ -4,6 +4,7 @@
 /Licenses/
 /bin/
 /data/
+/scripts/
 #Files
 *.o
 *.obj
@@ -11,5 +12,3 @@
 *.exe
 *.sh
 *.ini
-
-

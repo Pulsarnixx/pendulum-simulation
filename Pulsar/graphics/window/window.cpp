@@ -27,9 +27,14 @@ Window::~Window(){
     m_Window = nullptr;
 }
 
+void Window::SetVsync(bool option) const { glfwSwapInterval(option); } 
+
 bool Window::ShouldWindowClose() const { return glfwWindowShouldClose(m_Window); }
 
-void Window::onUpdate() const { glfwSwapBuffers(m_Window); glfwPollEvents();} // glfwPollEvents should be for Event manager
+void Window::onEvents() const { glfwPollEvents(); }
+
+void Window::onUpdate() const { glfwSwapBuffers(m_Window);} // glfwPollEvents should be for Event manager
+
 
 void Window::SetWindowDetails(unsigned int width, unsigned int height, const std::string& title){
 
@@ -41,4 +46,5 @@ void Window::SetWindowDetails(unsigned int width, unsigned int height, const std
 
     glfwSetWindowTitle(m_Window,title.c_str());
  }
+
 

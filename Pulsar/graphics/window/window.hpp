@@ -32,7 +32,9 @@ public:
     unsigned int GetHeight() const { return m_Height; }
     unsigned int GetWidth() const { return m_Width; }
 
+    void SetVsync(bool option) const;
     bool ShouldWindowClose() const;
+    void onEvents() const;
     void onUpdate() const;
     void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
 private:
