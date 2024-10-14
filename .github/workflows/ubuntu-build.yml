@@ -22,7 +22,8 @@ jobs:
         fetch-depth: 0
 
     - name: Install essential tools
-      run: sudo apt-get install build-essential cmake xorg-dev
+      run: sudo apt-get install build-essential cmake xorg-dev \
+           libwayland-dev libxkbcommon-dev wayland-protocols extra-cmake-modules
 
     - name: Build
       run: |
