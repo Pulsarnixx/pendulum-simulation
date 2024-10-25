@@ -18,6 +18,11 @@ set(STB_IMAGE ${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image/)
 message(STATUS "[STB_IMAGE] include path:  ${STB_IMAGE}")
 #------------------------------------------------
 
+#------------GLM----------------------------------
+set(GLM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/)
+message(STATUS "[GLM] include path:  ${GLM_INCLUDE_DIR}")
+#------------------------------------------------
+
 #------------IMGUI--------------------------------
 set(IMGUI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/)
 message(STATUS "[IMGUI] include path: ${IMGUI_INCLUDE_DIR}")
@@ -87,12 +92,12 @@ add_library( ${PROJECT_NAME} STATIC
 
 target_include_directories( ${PROJECT_NAME} PUBLIC ${SPDLOG_INCLUDE_DIR} 
                             ${GLAD_INCLUDE_DIR}    ${GLFW_INCLUDE_DIR} 
-                            ${IMGUI_INCLUDE_DIR}   ${STB_IMAGE}
-                            ${IMGUI_BACKENDS_INCLUDE_DIR} ${CORE_INCLUDE_PATH}   
-                            ${GRAPHICS_INCLUDE_PATH}
+                            ${STB_IMAGE} ${GLM_INCLUDE_DIR}
+                            ${IMGUI_INCLUDE_DIR} ${IMGUI_BACKENDS_INCLUDE_DIR}    
+                            ${CORE_INCLUDE_PATH} ${GRAPHICS_INCLUDE_PATH}
 )
 
 target_link_libraries( ${PROJECT_NAME} PUBLIC
-                        glad glfw imgui stb_image
+                        glad glfw stb_image imgui
 )
 
