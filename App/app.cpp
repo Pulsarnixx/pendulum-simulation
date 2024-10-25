@@ -1,7 +1,7 @@
 #include "Pulsar.hpp"
 
 #define EXAMPLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/shader_prog.txt"
-#define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/hagrid.jpg"
+#define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/grass.jpg"
 
 int main(){
 
