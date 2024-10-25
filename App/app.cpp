@@ -59,6 +59,7 @@ int main(){
     Texture2D texture1(file_path);
     texture1.Bind(); //choose slot
 
+   
     while (!window->ShouldWindowClose())
     {
 
