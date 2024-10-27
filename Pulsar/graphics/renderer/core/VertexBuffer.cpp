@@ -4,7 +4,6 @@
 
 //Constr, Destr.
 
-//VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int type, unsigned int usage){}
 VertexBuffer::VertexBuffer(const void* data, unsigned int size){
     glGenBuffers(1,&m_ID);
     glBindBuffer(GL_ARRAY_BUFFER,m_ID);

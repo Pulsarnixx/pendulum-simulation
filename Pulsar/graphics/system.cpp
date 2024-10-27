@@ -80,6 +80,7 @@ void System::Init(){
         ShutDown();
     
     GLFWwindow* currentWindow = m_Window->GetWindowGLFW();
+
     glfwMakeContextCurrent(currentWindow);
 
     //Load OpenGL context
@@ -93,6 +94,11 @@ void System::Init(){
     PX_CORE_INFO("GLAD initialization success!");
 
     glViewport(0,0,DEFAULT_WEIGHT,DEFAULT_HEIGHT);
+
+
+    //Enable Depth test
+    glEnable(GL_DEPTH_TEST);
+    
 
     CreateRender();
     if(m_Renderer == nullptr)
