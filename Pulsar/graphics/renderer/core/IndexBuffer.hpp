@@ -9,7 +9,7 @@ public:
 
         //Constr, Destr.
         IndexBuffer() = delete;
-        IndexBuffer(const unsigned int* data, unsigned int count);
+        IndexBuffer(const unsigned int* data, unsigned int size);
         ~IndexBuffer();
 
         //Utilities

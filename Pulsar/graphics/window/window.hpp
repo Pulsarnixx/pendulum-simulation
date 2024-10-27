@@ -39,7 +39,7 @@ public:
     void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
 
 private:
-    void setupGLFWCallBack();
+    void SetupCallBacks();
 
 private:
 

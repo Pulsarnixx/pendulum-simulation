@@ -21,33 +21,17 @@ int main(){
     //Window option
     window->SetVsync(false);
 
-    class Cube cube1;
+    Cube cube1;
 
-    //Buffers / containers
-    VertexArray  vao;
-    VertexBuffer vbo(cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize() );
-    IndexBuffer  ebo(cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize());
-
-    //Vertex attributes
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(2);
-
-    //Add everything to one container - vao
-    vao.AddBuffer(vbo, layout);
-
-    //Unbind everything (buffers are not needed, vao will be changed in loop)
-    vao.UnBind();
-    vbo.UnBind();
-    //Unbind index buffer only when vao is unbind.
-    ebo.UnBind();
+    Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
+                    cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
+                  );
 
     /*
         SHADERS
     */
     std::string file_path = EXAMPLE_SHADER;
     Shader shaderProgram(file_path);
-    shaderProgram.Bind();
 
 
     /*
@@ -109,19 +93,8 @@ int main(){
 
 
         //Rendering staff...
-        vao.Bind();
-        ebo.Bind();
-
-   
-
-        /*
-            START MEASURING RENDER FRAME TIME
-        */       
-
-        renderer->Render();
-        /*
-            STOP MEASURING RENDER FRAME TIME
-        */  
+        renderer->Render(cubeMesh,shaderProgram);
+      
      
         
         gui->OnBegin();

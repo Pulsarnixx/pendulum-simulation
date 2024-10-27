@@ -3,7 +3,11 @@
 #include "glad.h"
 #include <GLFW/glfw3.h>
 
-#include "../../../core/log/log.hpp" //Logging 
+#undef DEBUG
+
+#ifdef DEBUG
+    #include "../../../core/log/log.hpp"
+#endif
 
 /*
     GLFW CALL BACKS FUNTTIONS
@@ -11,8 +15,11 @@
 
 void FrameBufferCallBack(GLFWwindow* window, int width, int height){
     
-    std::string s = "[FrameBuffer] resolution: " + std::to_string(width) + " x " + std::to_string(height);
-    PX_CORE_TRACE(s);
+    #ifdef DEBUG
+        std::string s = "[FrameBuffer] resolution: " + std::to_string(width) + " x " + std::to_string(height);
+        PX_CORE_TRACE(s);
+    #endif
+ 
     glViewport(0, 0, width, height);
     
 }
@@ -20,29 +27,54 @@ void FrameBufferCallBack(GLFWwindow* window, int width, int height){
 void KeyInputCallBack(GLFWwindow* window, int key, int scancode, int action, int mods){
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-        PX_CORE_TRACE("[Keyboard] pressed: ESCAPE");
+
+        #ifdef DEBUG
+            PX_CORE_TRACE("[Keyboard] pressed: ESCAPE");
+        #endif
+        
         glfwSetWindowShouldClose(window,GLFW_TRUE);
     }
 
     if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        PX_CORE_TRACE("[Keyboard] pressed: W");
-    if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        PX_CORE_TRACE("[Keyboard] pressed: S");
-    if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        PX_CORE_TRACE("[Keyboard] pressed: D");
-    if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        PX_CORE_TRACE("[Keyboard] pressed: A");
+        #ifdef DEBUG
+             PX_CORE_TRACE("[Keyboard] pressed: W");
+        #endif
+       
+    if (key == GLFW_KEY_S && action == GLFW_PRESS){
+        #ifdef DEBUG
+            PX_CORE_TRACE("[Keyboard] pressed: S");
+        #endif
+
+    }
+    if (key == GLFW_KEY_D && action == GLFW_PRESS){
+        #ifdef DEBUG
+            PX_CORE_TRACE("[Keyboard] pressed: D");
+        #endif
+
+    }
+    if (key == GLFW_KEY_A && action == GLFW_PRESS){
+        #ifdef DEBUG
+            PX_CORE_TRACE("[Keyboard] pressed: A");
+        #endif
         
+    }
 }
 
 void MouseCallBack(GLFWwindow* window, double xposIn, double yposIn){
-    std::string s = "[Mouse] position: " + std::to_string(xposIn) + " " + std::to_string(yposIn);
-    PX_CORE_TRACE(s);
+
+    #ifdef DEBUG
+        std::string s = "[Mouse] position: " + std::to_string(xposIn) + " " + std::to_string(yposIn);
+        PX_CORE_TRACE(s);
+    #endif
 }  
 
 void ScrollCallBack(GLFWwindow* window, double xpos2, double ypos2){
-    std::string s = "[Mouse Scroll] values: " + std::to_string(xpos2) + " " + std::to_string(ypos2);
-    PX_CORE_TRACE(s);
+
+    #ifdef DEBUG
+        std::string s = "[Mouse Scroll] values: " + std::to_string(xpos2) + " " + std::to_string(ypos2);
+        PX_CORE_TRACE(s);
+    #endif
+
 }  
 
 
@@ -56,7 +88,7 @@ Window::Window(){
     m_Height = DEFAULT_HEIGHT;
     m_Title  = DEFAULT_TITLE;
 
-    setupGLFWCallBack();
+    SetupCallBacks();
 
 }
 
@@ -67,7 +99,7 @@ Window::Window(unsigned int width, unsigned int height, const std::string& title
     m_Height = DEFAULT_HEIGHT;
     m_Title  = title.c_str();
 
-    setupGLFWCallBack();
+    SetupCallBacks();
 }
 
 
@@ -96,7 +128,7 @@ void Window::SetWindowDetails(unsigned int width, unsigned int height, const std
     glfwSetWindowTitle(m_Window,title.c_str());
  }
 
-void Window::setupGLFWCallBack(){
+void Window::SetupCallBacks(){
 
     glfwSetFramebufferSizeCallback(m_Window, FrameBufferCallBack);
     glfwSetKeyCallback(m_Window,KeyInputCallBack);

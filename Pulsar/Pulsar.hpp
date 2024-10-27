@@ -28,6 +28,7 @@
 #include "renderer/core/VertexBufferLayout.hpp"
 #include "renderer/core/IndexBuffer.hpp"
 #include "renderer/core/Textures.hpp"
+#include "renderer/core/Mesh.hpp"
 
 //-------RENDERER PRIMITIVES----------------
 #include "renderer/primitives/Cube.hpp"
