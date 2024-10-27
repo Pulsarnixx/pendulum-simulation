@@ -1,5 +1,10 @@
 #pragma once
 
+
+//Forward dec.
+class Mesh;
+class Shader;
+
 /*
     Class represent 3D Renderer
 */
@@ -20,7 +25,7 @@ public:
 
 
     void BeginRender() const;
-    void Render() const;
+    void Render(Mesh& mesh, Shader& shaderProgram) const;
   
 private:
 

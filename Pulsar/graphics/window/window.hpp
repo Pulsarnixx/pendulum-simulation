@@ -3,8 +3,8 @@
 #include <string>
 
 
-#define DEFAULT_HEIGHT 1080
-#define DEFAULT_WEIGHT 1920
+#define DEFAULT_HEIGHT 900
+#define DEFAULT_WEIGHT 1600
 #define DEFAULT_TITLE  "Title"
 
 //Forward dec.
@@ -37,6 +37,10 @@ public:
     void onEvents() const;
     void onUpdate() const;
     void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
+
+private:
+    void SetupCallBacks();
+
 private:
 
     GLFWwindow* m_Window;

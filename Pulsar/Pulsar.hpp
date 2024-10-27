@@ -1,29 +1,37 @@
 #pragma once
 
-//-------CORE----------------------
+//-------CORE-------------------------------
 #include "log/log.hpp"
 #include "timers/TimeManager.hpp"
 
-#include <glm/glm.hpp>
+//-------MATH-------------------------------
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#define PX_LOG Log
-//---------------------------------
+//-------END CORE---------------------------
 
-//-------GRAPHICS----------------------
+
+
+//-------GRAPHICS---------------------------
 #include "system.hpp"
-#define PX System
 
+//-------IMGUI---------------------------               TO REMOVE!!!
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+//-------RENDERER---------------------------
 #include "renderer/shader.hpp"
 
-//GRAPHICS CORE
+//-------RENDERER CORE----------------------
 #include "renderer/core/VertexArray.hpp"
 #include "renderer/core/VertexBuffer.hpp"
 #include "renderer/core/VertexBufferLayout.hpp"
 #include "renderer/core/IndexBuffer.hpp"
 #include "renderer/core/Textures.hpp"
+#include "renderer/core/Mesh.hpp"
 
-//GRAPHICS PRIMITIVES
+//-------RENDERER PRIMITIVES----------------
 #include "renderer/primitives/Cube.hpp"
-//---------------------------------
+
+
+//-------END GRAPHICS-----------------------

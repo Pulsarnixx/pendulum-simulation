@@ -2,6 +2,8 @@
 
 #include <string> //std::string
 #include <unordered_map> //std::unordered_map for cache
+#include <glm/glm.hpp> //math for glm::mat4
+
 
 //Forward dec.
 struct ShaderSource;
@@ -26,7 +28,7 @@ public:
         //Uniform manipulation
         void SetUniform1i(const std::string& name, int v0);
         void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3 );
-        // void SetUniformMat4f(const std::string& name, const glm::mat4& m1); 
+        void SetUniformMat4f(const std::string& name, const glm::mat4& m1); 
 
 private:
     ShaderSource ReadGLSLFromFile(const std::string& filepath);

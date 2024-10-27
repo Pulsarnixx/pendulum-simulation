@@ -9,8 +9,6 @@ void Gui::OnBegin() const{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow();
-
 }
 
 void Gui::OnEnd() const{
