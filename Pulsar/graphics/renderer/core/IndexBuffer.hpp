@@ -16,6 +16,7 @@ public:
         void Bind() const ;
         void UnBind() const ;
         inline unsigned int GetCount() const { return m_Count; }
+        unsigned int GetID() const { return m_ID; }
 
 private:
         unsigned int m_ID;

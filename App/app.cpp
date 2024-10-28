@@ -27,21 +27,21 @@ int main(){
         Cube primitive with dependecies
     */
         //Data
-        // Cube cube1;
+        Cube cube1;
         
-        // //Mesh = VAO,VBO,EBO
-        // Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
-        //                 cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
-        //             );
-        // //Shader for cube
-        // std::string file_path = EXAMPLE_SHADER;
-        // Shader shaderProgram(file_path);
+        //Mesh = VAO,VBO,EBO
+        Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
+                        cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
+                    );
+        //Shader for cube
+        std::string file_path = EXAMPLE_SHADER;
+        Shader shaderCube(file_path);
 
         // //Cube texture
-        // file_path = EXAMPLE_TEXTURE;
-        // Texture2D texture1(file_path);
-        // texture1.Bind(); //choose slot
-        // shaderProgram.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
+        file_path = EXAMPLE_TEXTURE;
+        Texture2D texture1(file_path);
+        texture1.Bind(); //choose slot
+        shaderCube.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
 
     /*
         Sphere primitive with dependecies
@@ -52,7 +52,7 @@ int main(){
         Mesh sphereMesh(sphere.GetVerticesArrayData(), sphere.GetVerticesArraySize());
 
         //Shader for cube
-        std::string file_path = EXAMPLE_SHADER2;
+        file_path = EXAMPLE_SHADER2;
         Shader shaderSphere(file_path);
 
 
@@ -64,6 +64,8 @@ int main(){
 
     GlobalTimer* timer = GlobalTimer::GetTimer().get();
     timer->Start();
+
+    int option = 0;
 
     while (!window->ShouldWindowClose())
     {
@@ -99,11 +101,20 @@ int main(){
         
         glm::mat4 mvp = proj * view * model;
 
-        // shaderProgram.SetUniformMat4f("u_mvp", mvp);
-        shaderSphere.SetUniformMat4f("u_mvp",mvp);
 
         //Rendering staff...
-        renderer->Render(sphereMesh,shaderSphere);
+
+        if(option == 1){
+            shaderCube.SetUniformMat4f("u_mvp",mvp);
+            renderer->RenderIndicies(cubeMesh,shaderCube);
+        }
+        
+        if(option == 2){
+            shaderSphere.SetUniformMat4f("u_mvp",mvp);
+            renderer->Render(sphereMesh,shaderSphere);
+        }
+
+    
         
      
         
@@ -131,9 +142,18 @@ int main(){
                         std::fill(std::begin(rotationArray), std::end(rotationArray), 0.0f);
                     }
 
-
                     ImGui::PopID();
                     ImGui::Separator();
+
+                    if(ImGui::Button("Cube"))
+                       option = 1;
+                    
+                    ImGui::SameLine();
+
+                    if(ImGui::Button("Sphere"))
+                       option = 2;
+                
+
 
                 ImGui::End();
             }

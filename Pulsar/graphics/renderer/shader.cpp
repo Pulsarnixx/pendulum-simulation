@@ -4,6 +4,11 @@
 #include <sstream> //stringstream
 #include "glad.h"  //gl functions
 
+#define DEBUG
+#ifdef DEBUG
+    #include "../../../core/log/log.hpp"
+#endif
+
 //ShaderSource definition
 struct ShaderSource{
     std::string s_vertexSource;
@@ -16,9 +21,21 @@ Shader::Shader(const std::string& filepath)
 {
     ShaderSource source = ReadGLSLFromFile(filepath);
     m_ID = GenerateShaderProgram(source.s_vertexSource, source.s_fragmentSource);
+
+    #ifdef DEBUG
+        std::string message = "[SHADER " + std::to_string(m_ID) + "] - constructor";
+        PX_CORE_TRACE(message);
+    #endif
+
 }
 
 Shader::~Shader(){
+
+    #ifdef DEBUG
+        std::string message = "[SHADER " + std::to_string(m_ID) + "] - destructor";
+        PX_CORE_TRACE(message);
+    #endif
+
     glDeleteProgram(m_ID);
 }
 

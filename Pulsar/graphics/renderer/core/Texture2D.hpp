@@ -18,8 +18,7 @@ public:
 
         inline int GetWidth() const { return m_Width; }
         inline int GetHeight() const { return m_Height; }
-        inline unsigned int GetTextureID() const { return m_ID; }
-
+        inline unsigned int GetID() const { return m_ID; }
 
 private:
         unsigned int m_ID;

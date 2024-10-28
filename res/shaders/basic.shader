@@ -1,4 +1,3 @@
-//[VERTEX SHADER]
 #shader vertex
 #version 330 core
 
@@ -15,7 +14,6 @@ void main()
    vtexCoords = texCoords;
 };
 
-//[FRAGMENT SHADER]
 #shader fragment
 #version 330 core
 

@@ -17,12 +17,18 @@ void Renderer::Render(Mesh& mesh, Shader& shaderProgram) const{
     GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
     mesh.Bind();
     shaderProgram.Bind();
-    //For VBO + EBO
-   /// glDrawElements(GL_TRIANGLES, verticiesNumber, GL_UNSIGNED_INT, 0);
     
     //FOR VBO only
     glDrawArrays(GL_LINE_STRIP, 0, verticiesNumber);
-    //UnBind() is not necessary I think.
 
+}
+
+void Renderer::RenderIndicies(Mesh& mesh, Shader& shaderProgram) const{
+
+    GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
+    mesh.Bind();
+    shaderProgram.Bind();
+    //For VBO + EBO
+    glDrawElements(GL_TRIANGLES, verticiesNumber, GL_UNSIGNED_INT, 0);
 }
 

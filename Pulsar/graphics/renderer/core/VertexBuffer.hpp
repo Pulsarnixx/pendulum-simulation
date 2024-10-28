@@ -16,6 +16,7 @@ public:
         //Utilities
         void Bind() const ;
         void UnBind() const ;
+        unsigned int GetID() const { return m_ID; }
 
 private:
         unsigned int m_ID;
