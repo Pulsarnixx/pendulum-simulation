@@ -17,8 +17,10 @@ public:
 
     //Constr. & destr.
     Mesh() = delete;
-    //Mesh(std::vector<float> &vertices, std::vector<unsigned int> &indices); --- in the future
+    //VBO & EBO
     Mesh(const void* verticesData, unsigned int verticesSize, const unsigned int* indiciesData, unsigned int indiciesSize);
+    //VBO
+    Mesh(const void* verticesData, unsigned int verticesSize);
     ~Mesh();
 
     //Utilities
