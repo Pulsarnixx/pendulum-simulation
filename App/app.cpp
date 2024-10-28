@@ -27,21 +27,21 @@ int main(){
         Cube primitive with dependecies
     */
         //Data
-        Cube cube1;
+        // Cube cube1;
         
-        //Mesh = VAO,VBO,EBO
-        Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
-                        cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
-                    );
-        //Shader for cube
-        std::string file_path = EXAMPLE_SHADER;
-        Shader shaderProgram(file_path);
+        // //Mesh = VAO,VBO,EBO
+        // Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
+        //                 cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
+        //             );
+        // //Shader for cube
+        // std::string file_path = EXAMPLE_SHADER;
+        // Shader shaderProgram(file_path);
 
-        //Cube texture
-        file_path = EXAMPLE_TEXTURE;
-        Texture2D texture1(file_path);
-        texture1.Bind(); //choose slot
-        shaderProgram.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
+        // //Cube texture
+        // file_path = EXAMPLE_TEXTURE;
+        // Texture2D texture1(file_path);
+        // texture1.Bind(); //choose slot
+        // shaderProgram.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
 
     /*
         Sphere primitive with dependecies
@@ -52,7 +52,7 @@ int main(){
         Mesh sphereMesh(sphere.GetVerticesArrayData(), sphere.GetVerticesArraySize());
 
         //Shader for cube
-        file_path = EXAMPLE_SHADER2;
+        std::string file_path = EXAMPLE_SHADER2;
         Shader shaderSphere(file_path);
 
 
