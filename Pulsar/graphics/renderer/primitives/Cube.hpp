@@ -9,7 +9,7 @@ public:
 
     //Constr. & destr.
         Cube() = default;
-        ~Cube(){};
+        ~Cube() = default;
     
     //Utilities
         static const void* GetVerticesArrayData() {return m_Vertices;}
