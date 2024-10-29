@@ -18,6 +18,7 @@ public:
         void Bind() const;
         void UnBind() const;
         void AddBuffer(const VertexBuffer& buffer, const VertexBufferLayout& layout);
+        unsigned int GetID() const { return m_ID; }
 
 private:
         unsigned int m_ID;

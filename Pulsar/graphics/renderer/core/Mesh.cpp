@@ -34,7 +34,10 @@ Mesh::Mesh(const void* verticesData, unsigned int verticesSize, const unsigned i
     this->m_EBO->UnBind();
 
 #ifdef DEBUG
-    PX_CORE_TRACE("Mesh constructor");
+    std::string message = "[MESH] constructor. VAO: " +
+                          std::to_string(this->m_VAO->GetID()) + " VBO: " + std::to_string(this->m_VBO->GetID()) + 
+                          " EBO: " + std::to_string(this->m_EBO->GetID());
+    PX_CORE_TRACE(message);
 #endif
 
 }
@@ -57,7 +60,9 @@ Mesh::Mesh(const void* verticesData, unsigned int verticesSize)
     this->m_VBO->UnBind();
 
 #ifdef DEBUG
-    PX_CORE_TRACE("Mesh constructor");
+    std::string message = "[MESH] constructor. VAO: " +
+                        std::to_string(this->m_VAO->GetID()) + " VBO: " + std::to_string(this->m_VBO->GetID());
+    PX_CORE_TRACE(message);
 #endif
 
 }
@@ -80,7 +85,8 @@ Mesh::~Mesh(){
     }
 
     #ifdef DEBUG
-    PX_CORE_TRACE("Mesh destructor");
+        std::string message = "[MESH] destructor ";
+        PX_CORE_TRACE(message);
     #endif
 }
 

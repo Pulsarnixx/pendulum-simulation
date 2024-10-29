@@ -45,7 +45,9 @@ Sphere::Sphere(float radius, unsigned int longitude, unsigned latitude){
     }
  }
 
- std::string s = "LICZBA PUNKTOW: " + std::to_string(points) + " DŁUGOSC VERTICES " + std::to_string(m_Vertices.size());
- PX_CORE_INFO(s);
+  #ifdef DEBUG
+        std::string message = "[SPHERE] " + std::to_string((m_Vertices.size() / 3 )) + " verticies" ;
+        PX_CORE_TRACE(message);
+  #endif
 
 }
