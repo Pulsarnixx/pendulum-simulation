@@ -26,5 +26,6 @@ private:
     //Data
         std::vector<float> m_Vertices;
         std::vector<unsigned int> m_Indices;
+        float m_CenterPoint[3];
 };//class Sphere
 

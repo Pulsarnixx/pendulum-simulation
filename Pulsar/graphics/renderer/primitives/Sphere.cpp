@@ -25,6 +25,10 @@
 */
 Sphere::Sphere(float radius, unsigned int longitude, unsigned latitude){
 
+ //Define center point as {0,0,0}
+ m_CenterPoint[0] = 0.0f; //x
+ m_CenterPoint[1] = 0.0f; //y
+ m_CenterPoint[2] = 0.0f; //z 
 
  //Verticies
  unsigned int points = 0;
@@ -33,9 +37,9 @@ Sphere::Sphere(float radius, unsigned int longitude, unsigned latitude){
     for (unsigned int j = 0; j < longitude; ++j) {
         float beta = j * (2 * M_PI / longitude);
 
-        float x = radius * cos(alpha) * cos(beta);
-        float y = radius * cos(alpha) * sin(beta);
-        float z = radius * sin(alpha);
+        float x = m_CenterPoint[0] + (radius * cos(alpha) * cos(beta));
+        float y = m_CenterPoint[1] + (radius * cos(alpha) * sin(beta));
+        float z = m_CenterPoint[2] + (radius * sin(alpha));
 
         points+=3;
 
