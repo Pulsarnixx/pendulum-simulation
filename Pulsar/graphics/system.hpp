@@ -10,6 +10,7 @@ class System {
 
         //System configuration
         static void Init();
+        static void InitUI();
         static void ShutDown();
 
         //System Access

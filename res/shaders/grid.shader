@@ -4,6 +4,8 @@
 uniform mat4 u_view;
 uniform mat4 u_proj;
 
+out float near; //0.01
+out float far; //100
 out vec3 nearPoint;
 out vec3 farPoint;
 out mat4 fragView;
@@ -32,6 +34,8 @@ void main() {
    vec3 p = gridPlane[gl_VertexID].xyz;
    nearPoint = UnprojectPoint(p.x, p.y, 0.0, u_view, u_proj).xyz; // unprojecting on the near plane
    farPoint = UnprojectPoint(p.x, p.y, 1.0, u_view, u_proj).xyz; // unprojecting on the far plane
+   near = 0.01;
+   far  = 100;
    fragView = u_view;
    fragProj = u_proj;
    gl_Position = vec4(p, 1.0);
@@ -42,6 +46,9 @@ void main() {
 #version 330 core
 
 //From vertex shader
+
+in float near; //0.01
+in float far; //100
 in vec3 nearPoint; 
 in vec3 farPoint;
 in mat4 fragView;
@@ -70,11 +77,23 @@ float computeDepth(vec3 pos) {
     vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
     return (clip_space_pos.z / clip_space_pos.w);
 }
+float computeLinearDepth(vec3 pos) {
+    vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
+    float clip_space_depth = (clip_space_pos.z / clip_space_pos.w) * 2.0 - 1.0; // put back between -1 and 1
+    float linearDepth = (2.0 * near * far) / (far + near - clip_space_depth * (far - near)); // get linear value between 0.01 and 100
+    return linearDepth / far; // normalize
+}
 
 void main()
 {
     float t = -nearPoint.y / (farPoint.y - nearPoint.y);
     vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
+
     gl_FragDepth = computeDepth(fragPos3D);
-    color = grid(fragPos3D, 10, true) * float(t > 0);
+
+    float linearDepth = computeLinearDepth(fragPos3D);
+    float fading = max(0, (0.5 - linearDepth));
+
+    color = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
+    color.a *= fading;
 };

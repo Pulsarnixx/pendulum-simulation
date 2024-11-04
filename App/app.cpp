@@ -1,12 +1,18 @@
 #include "Pulsar.hpp"
 
-#define DEBUG
-
 #define EXAMPLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/basic.shader"
 #define EXAMPLE_SHADER2 "/home/marek/Dev/Projects/pulsarEngine/res/shaders/sphere.shader"
 #define GRID_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/grid.shader"
 #define LINE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/line.shader"
 #define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/cegla.jpg"
+
+
+static Camera camera;
+static unsigned int Width = 1600;
+static unsigned int Height = 900;
+bool firstMouse = true;
+static float lastX = static_cast<float>(Width) / 2;
+static float lastY = static_cast<float>(Height) / 2;
 
 /*
     GLFW CALL BACKS FUNTTIONS
@@ -18,12 +24,14 @@ void FrameBufferCallBack(GLFWwindow* window, int width, int height){
         PX_CORE_TRACE(s);
     #endif
  
-    glViewport(0, 0, width, height);    
+    glViewport(0, 0, width, height);
+    Width = width;
+    Height = height;  
 }
 
 void KeyInputCallBack(GLFWwindow* window, int key, int scancode, int action, int mods){
 
-    // float cameraStep = 2.5f * (1.0f / 60.0f);
+    float cameraStep = 2.5f * (1.0f / 60.0f);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
 
@@ -38,25 +46,25 @@ void KeyInputCallBack(GLFWwindow* window, int key, int scancode, int action, int
         #ifdef DEBUG
              PX_CORE_TRACE("[Keyboard] pressed: W");
         #endif
-        // camera.s_position += cameraStep * camera.s_front;
+        camera.s_position += cameraStep * camera.s_front;
     }
     if (key == GLFW_KEY_S && action == GLFW_REPEAT){
         #ifdef DEBUG
              PX_CORE_TRACE("[Keyboard] pressed: S");
         #endif
-        // camera.s_position -= cameraStep * camera.s_front;
+        camera.s_position -= cameraStep * camera.s_front;
     }
     if (key == GLFW_KEY_D && action == GLFW_REPEAT){
          #ifdef DEBUG
              PX_CORE_TRACE("[Keyboard] pressed: D");
         #endif
-        // camera.s_position += cameraStep * glm::normalize(glm::cross(camera.s_front,camera.s_up));
+        camera.s_position += cameraStep * glm::normalize(glm::cross(camera.s_front,camera.s_up));
     }
     if (key == GLFW_KEY_A && action == GLFW_REPEAT){
         #ifdef DEBUG
              PX_CORE_TRACE("[Keyboard] pressed: A");
         #endif
-        // camera.s_position -= cameraStep * glm::normalize(glm::cross(camera.s_front,camera.s_up));
+        camera.s_position -= cameraStep * glm::normalize(glm::cross(camera.s_front,camera.s_up));
     }
 
       
@@ -70,43 +78,43 @@ void MouseCallBack(GLFWwindow* window, double xposIn, double yposIn){
         PX_CORE_TRACE(s);
     #endif
 
-    // float xpos = static_cast<float>(xposIn);
-    // float ypos = static_cast<float>(yposIn);
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
 
-    // if (firstMouse)
-    // {
-    //     lastX = xpos;
-    //     lastY = ypos;
-    //     firstMouse = false;
-    // }
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    // float xoffset = xpos - lastX;
-    // float yoffset = lastY - ypos;
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
 
-    // lastX = xpos;
-    // lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    // const float sensitivity = 0.1f;
-    // xoffset *= sensitivity;
-    // yoffset *= sensitivity;
+    const float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
 
-    // camera.yaw += xoffset;
-    // camera.pitch += yoffset;
+    camera.yaw += xoffset;
+    camera.pitch += yoffset;
 
-    // camera.yaw   += xoffset;
-    // camera.pitch += yoffset;
+    camera.yaw   += xoffset;
+    camera.pitch += yoffset;
 
-    // if(camera.pitch > 89.0f)
-    //     camera.pitch = 89.0f;
-    // if(camera.pitch < -89.0f)
-    //     camera.pitch = -89.0f;
+    if(camera.pitch > 89.0f)
+        camera.pitch = 89.0f;
+    if(camera.pitch < -89.0f)
+        camera.pitch = -89.0f;
 
 
-    // glm::vec3 direction;
-    // direction.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-    // direction.y = sin(glm::radians(camera.pitch));
-    // direction.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-    // camera.s_front = glm::normalize(direction);
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+    direction.y = sin(glm::radians(camera.pitch));
+    direction.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+    camera.s_front = glm::normalize(direction);
 }  
 
 void ScrollCallBack(GLFWwindow* window, double xpos2, double ypos2){
@@ -116,11 +124,11 @@ void ScrollCallBack(GLFWwindow* window, double xpos2, double ypos2){
         PX_CORE_TRACE(s);
     #endif
 
-    // camera.fov -= (float)ypos2;
-    // if (camera.fov < 1.0f)
-    //     camera.fov = 1.0f;
-    // if (camera.fov > 90.0f)
-    //     camera.fov = 90.0f; 
+    camera.fov -= (float)ypos2;
+    if (camera.fov < 1.0f)
+        camera.fov = 1.0f;
+    if (camera.fov > 90.0f)
+        camera.fov = 90.0f; 
 
 }  
 
@@ -138,18 +146,26 @@ int main(){
 
     const Window* window = System::GetWindow();
     const Renderer* renderer = System::GetRenderer();
-    const Gui* gui = System::GetGui();
 
     //Define GLFW callbacks for input
     window->SetFrameBufferSizeCallBack(FrameBufferCallBack);
     window->SetKeyCallBack(KeyInputCallBack);
-    window->SetCursorPostionCallBack(MouseCallBack);
+    // window->SetCursorPostionCallBack(MouseCallBack);
     window->SetScrollCallBack(ScrollCallBack);
-
-    Camera camera;
 
     //Window option
     window->SetVsync(false);
+
+    System::InitUI();
+    const Gui* gui = System::GetGui();
+
+    //Camera initial values
+    camera.s_position = glm::vec3(0.0f, 3.0f, 8.0f);
+    camera.fov = 45.0f;
+    camera.pitch = -20.0f;
+    camera.yaw = 90.0f;
+
+
 
 
     /*
@@ -176,7 +192,7 @@ int main(){
         Sphere primitive with dependecies
     */
         //Data
-        Sphere sphere({0.0f, 0.0f, 0.0f}, 1.0f, 36, 18);
+        Sphere sphere({0.0f, 2.0f, 0.0f}, 1.0f, 36, 18);
         
         Mesh sphereMesh(sphere.GetVerticesArrayData(), sphere.GetVerticesArraySize(),
                         sphere.GetIndicatesArrayData(), sphere.GetIndicatesArraySize()
@@ -216,13 +232,9 @@ int main(){
 
    
     //For IMGUI entry
-    float transArray[3] = {}; 
-    float scaleArray[3] = {1.0f,1.0f,1.0f};
+    float transArray[3] = {0.0f, 1.0f, 0.0f}; 
+    float scaleArray[3] = {0.5f,0.5f,0.5f};
     float rotationArray[3] = {};
-
-    float cameraPosition[3] = {0.0f, 1.0f, 5.0f}; 
-    float cameraFront[3] = {0.0f, -1.0f, -1.0f};
-    float cameraUp[3] = {0.0f, 1.0f, 0.0f};
 
     GlobalTimer* timer = GlobalTimer::GetTimer().get();
     timer->Start();
@@ -255,36 +267,13 @@ int main(){
         glm::mat4 model = trans * rotation * scale; 
 
         /* VIEW MATRIX */
-
-        // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f)); 
-
-        //Camera setting
-        camera.s_position = glm::vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]);  
-        camera.s_front = glm::vec3(cameraFront[0], cameraFront[1], cameraFront[2]);    
-        camera.s_up = glm::vec3(cameraUp[0], cameraUp[1], cameraUp[2]);    
-
-        glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-        glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);   
-
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
-        glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-        glm::vec3 camera_Up = glm::cross(cameraDirection, cameraRight);
-
-
-        glm::mat4 view = glm::lookAt(
-           glm::vec3(0.0f, 1.5f, 5.0f),  //position
-  		   glm::vec3(0.0f, 0.0f, 0.0f), 
-  		   glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // glm::mat4 view = glm::lookAt(
-        //                     camera.s_position,                        //position
-        //                     camera.s_position +  camera.s_front,      //target
-        //                     camera.s_up                               //up
-        //                     );
+        glm::mat4 view = glm::lookAt(camera.s_position,               //position
+                                    camera.s_position +  camera.s_front,//target
+                                    camera.s_up                //up
+                                    );
 
         /* PROJECTION MATRIX */
-        glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float) DEFAULT_WEIGHT / (float) DEFAULT_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 proj = glm::perspective(glm::radians(camera.fov), (float)Width / (float)Height, 0.1f, 1000.0f);
         
         glm::mat4 mvp = proj * view * model;
 
@@ -294,13 +283,13 @@ int main(){
         gridShader.SetUniformMat4f("u_proj", proj);
         renderer->RenderGrid(gridShader);
 
-        shaderCube.Bind();
-        shaderCube.SetUniformMat4f("u_mvp",mvp);
-        renderer->RenderMesh(cubeMesh,shaderCube);
+        // shaderCube.Bind();
+        // shaderCube.SetUniformMat4f("u_mvp",mvp);
+        // renderer->RenderMesh(cubeMesh,shaderCube);
 
-        // shaderSphere.Bind();
-        // shaderSphere.SetUniformMat4f("u_mvp",mvp);
-        // renderer->RenderMesh(sphereMesh,shaderSphere);
+        shaderSphere.Bind();
+        shaderSphere.SetUniformMat4f("u_mvp",mvp);
+        renderer->RenderMesh(sphereMesh,shaderSphere);
 
         // lineVAO.Bind();
         // lineShader.Bind();
@@ -339,10 +328,9 @@ int main(){
 
                     ImGui::PushID(1);
                     ImGui::Text("Camera");
-                    ImGui::SliderFloat3("Position",cameraPosition,-10.0f,10.0f);
-                    ImGui::SliderFloat3("Front",cameraFront,-10.0f,10.0f);
-                    ImGui::SliderFloat3("Up",cameraUp,-10.0f,10.0f);
-
+                    ImGui::Text("Position:  X: %f, Y: %f, Z: %f",camera.s_position.x ,camera.s_position.y ,camera.s_position.z );
+                    ImGui::Text("Angle: Pitch: %f, Yaw: %f , Fov: %f",camera.pitch,camera.yaw,camera.fov);
+                    ImGui::Separator();
                     ImGui::PopID();
                     ImGui::Separator();
                 

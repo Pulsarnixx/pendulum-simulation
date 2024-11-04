@@ -40,7 +40,7 @@ void Window::SetVsync(bool option) const { glfwSwapInterval(option); }
 
 bool Window::ShouldWindowClose() const { return glfwWindowShouldClose(m_Window); }
 
-void Window::onEvents() const { glfwPollEvents(); }// glfwPollEvents should be for Event manager
+void Window::onEvents() const {  glfwPollEvents(); }// glfwPollEvents should be for Event manager
 
 void Window::onUpdate() const { glfwSwapBuffers(m_Window);} 
 

@@ -95,16 +95,25 @@ void System::Init(){
 
     glViewport(0,0,DEFAULT_WEIGHT,DEFAULT_HEIGHT);
 
+    CreateRender();
+    if(m_Renderer == nullptr)
+        ShutDown();
 
     //Enable Depth test
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
     
     glEnable(GL_DEPTH_TEST);
+  
+    PrintPlatformDetails();
+}
 
-    CreateRender();
-    if(m_Renderer == nullptr)
-        ShutDown();
+void System::InitUI(){
+
+    if(m_Window == nullptr || m_Renderer == nullptr){
+        PX_CORE_ERROR("Initialize window and renderer first!");
+        return;
+    }
 
     // // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -113,8 +122,9 @@ void System::Init(){
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(currentWindow, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowGLFW(), true);
     ImGui_ImplOpenGL3_Init();
 
     m_isIMGUIInitialized = true;
@@ -123,8 +133,7 @@ void System::Init(){
     CreateGUI();
     if(m_Gui == nullptr)
         ShutDown();
-  
-    PrintPlatformDetails();
+
 }
 
 void System::ShutDown(){
