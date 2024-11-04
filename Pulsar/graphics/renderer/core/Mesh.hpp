@@ -2,10 +2,10 @@
 
 #include <vector> //for std::vector<T>
 
-//Forward dec. - perhaps temp. solution, cause this causes initialization to heap memory. Maybe better is to use opengl function without OOP?
-class VertexArray;
-class VertexBuffer;
-class IndexBuffer;
+#include "renderer/core/VertexArray.hpp"
+#include "renderer/core/VertexBuffer.hpp"
+#include "renderer/core/VertexBufferLayout.hpp"
+#include "renderer/core/IndexBuffer.hpp"
 
 /*
     Mesh class that's just container for VertexArray, VertexBuffer and IndexBuffer objects

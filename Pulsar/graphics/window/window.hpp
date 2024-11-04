@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #define DEFAULT_HEIGHT 900
 #define DEFAULT_WEIGHT 1600
 #define DEFAULT_TITLE  "Title"

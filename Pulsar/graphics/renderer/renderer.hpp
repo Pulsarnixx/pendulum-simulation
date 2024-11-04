@@ -25,8 +25,8 @@ public:
 
 
     void BeginRender() const;
-    void Render(Mesh& mesh, Shader& shaderProgram) const;
-    void RenderIndicies(Mesh& mesh, Shader& shaderProgram) const; //temporary!!
+    void RenderGrid(Shader& shaderProgram) const;
+    void RenderMesh(Mesh& mesh, Shader& shaderProgram) const;
   
 private:
 

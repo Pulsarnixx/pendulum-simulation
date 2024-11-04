@@ -2,7 +2,6 @@
 #version 330 core
 
 layout (location = 0) in vec3 posCoords;
-layout (location = 1) in vec2 texCoords;
 
 uniform mat4 u_mvp;
 
@@ -14,9 +13,10 @@ void main()
 #shader fragment
 #version 330 core
 
-out vec4 FragColor;
+out vec4 color;
+
 
 void main()
 {
-   FragColor = vec4(0.0,0.55, 0.55, 1.0);
+   color = vec4(0.0, 0.0, 0.0, 1.0);
 };
