@@ -1,6 +1,9 @@
 #shader vertex
 #version 330 core
 
+//Infinit grid algorihtm based on: 
+//https://asliceofrendering.com/scene%20helper/2020/01/05/InfiniteGrid/
+
 uniform mat4 u_view;
 uniform mat4 u_proj;
 

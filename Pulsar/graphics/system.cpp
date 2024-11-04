@@ -74,7 +74,7 @@ void System::Init(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    CreateWindow(DEFAULT_WEIGHT,DEFAULT_HEIGHT,"Application");
+    CreateWindow(1600,900,"Application");
 
     if(m_Window == nullptr)
         ShutDown();
@@ -93,7 +93,7 @@ void System::Init(){
     m_isGLADInitilized = true;
     PX_CORE_INFO("GLAD initialization success!");
 
-    glViewport(0,0,DEFAULT_WEIGHT,DEFAULT_HEIGHT);
+    glViewport(0,0,1600,900);
 
     CreateRender();
     if(m_Renderer == nullptr)
@@ -109,6 +109,8 @@ void System::Init(){
 }
 
 void System::InitUI(){
+
+    assert(s_Instance);
 
     if(m_Window == nullptr || m_Renderer == nullptr){
         PX_CORE_ERROR("Initialize window and renderer first!");

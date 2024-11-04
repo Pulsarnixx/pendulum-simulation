@@ -1,11 +1,16 @@
 #include "Pulsar.hpp"
 
+
+//Shader code paths
 #define EXAMPLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/basic.shader"
-#define EXAMPLE_SHADER2 "/home/marek/Dev/Projects/pulsarEngine/res/shaders/sphere.shader"
+#define SPHERE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/sphere.shader"
 #define GRID_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/grid.shader"
 #define LINE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/line.shader"
-#define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/cegla.jpg"
 
+
+//Texture paths
+#define EXAMPLE_TEXTURE  "/home/marek/Dev/Projects/pulsarEngine/res/images/cegla.jpg"
+#define SPHERE_TEXTURE "/home/marek/Dev/Projects/pulsarEngine/res/images/ball_texture.jpg"
 
 static Camera camera;
 static unsigned int Width = 1600;
@@ -159,6 +164,11 @@ int main(){
     System::InitUI();
     const Gui* gui = System::GetGui();
 
+    //For IMGUI entry
+    float transArray[3] = {0.0f, 1.0f, 0.0f}; 
+    float scaleArray[3] = {0.5f,0.5f,0.5f};
+    float rotationArray[3] = {};
+
     //Camera initial values
     camera.s_position = glm::vec3(0.0f, 3.0f, 8.0f);
     camera.fov = 45.0f;
@@ -166,78 +176,81 @@ int main(){
     camera.yaw = 90.0f;
 
 
+    std::string file_path;
 
 
     /*
         Cube primitive with dependecies
     */
         //Data
-        Cube cube1;
+        // Cube cube1;
         
-        Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
-                        cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
-                    );
+        // Mesh cubeMesh(  cube1.GetVerticesArrayData(), cube1.GetVerticesArraySize(),
+        //                 cube1.GetIndicatesArrayData(), cube1.GetIndicatesArraySize()
+        //             );
 
-        //Shader for cube
-        std::string file_path = EXAMPLE_SHADER;
-        Shader shaderCube(file_path);
+        // //Shader for cube
+        // std::string file_path = EXAMPLE_SHADER;
+        // Shader shaderCube(file_path);
 
-        // //Cube texture
-        file_path = EXAMPLE_TEXTURE;
-        Texture2D texture1(file_path);
-        texture1.Bind(); //choose slot
-        shaderCube.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
-
+        // // //Cube texture
+        // file_path = EXAMPLE_TEXTURE;
+        // Texture2D texture1(file_path);
+        // texture1.Bind(); //choose slot
+    
+        // shaderCube.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. For Bind() is deafult = 0
     /*
-        Sphere primitive with dependecies
+    =================================================
+                        GRID 
+    =================================================        
     */
-        //Data
+
+        file_path = GRID_SHADER;
+        Shader gridShader(file_path);
+   
+    /*
+    =================================================
+                        Sphere 
+    =================================================        
+    */
         Sphere sphere({0.0f, 2.0f, 0.0f}, 1.0f, 36, 18);
         
         Mesh sphereMesh(sphere.GetVerticesArrayData(), sphere.GetVerticesArraySize(),
                         sphere.GetIndicatesArrayData(), sphere.GetIndicatesArraySize()
                     );
 
-        //Shader for cube
-        file_path = EXAMPLE_SHADER2;
+        file_path = SPHERE_SHADER;
         Shader shaderSphere(file_path);
 
+        file_path = SPHERE_TEXTURE;
+        Texture2D sphereTexture(file_path);
+        sphereTexture.Bind(); //choose slot. For Bind() default is  '0'
+        shaderSphere.SetUniform1i("u_texture", 0); // Tell GPU witch texture slot should be use. 
 
-        //Line for sphere 
-        Vector3f sphereCenter = sphere.getCenter();
+
+    /*
+    =================================================
+                        LINE 
+    =================================================        
+    */
+        Vector3f startPoint = sphere.getCenter();
         float sphereRadius = sphere.getRadius();
-        float lineLenght = 10.0f;
+        float lineLenght = 5.0f;
 
         float lineVerticies[] = { 
-            0.0f, -5.0f, 0.0f, 
-            0.0f,  5.0f, 0.0f, 
+            startPoint.x, startPoint.y + sphereRadius, startPoint.z, 
+            startPoint.x, startPoint.y + sphereRadius + lineLenght, startPoint.z
         };
 
         VertexArray lineVAO;
         VertexBuffer lineVBO(lineVerticies, 6 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(3);  //positions
-
-
         lineVAO.AddBuffer(lineVBO, layout);
-
         lineVAO.UnBind();
-
         file_path = LINE_SHADER;
         Shader lineShader(file_path);
 
-        // Square grid;
-        file_path = GRID_SHADER;
-        Shader gridShader(file_path);
-
-   
-    //For IMGUI entry
-    float transArray[3] = {0.0f, 1.0f, 0.0f}; 
-    float scaleArray[3] = {0.5f,0.5f,0.5f};
-    float rotationArray[3] = {};
-
-    GlobalTimer* timer = GlobalTimer::GetTimer().get();
-    timer->Start();
 
     while (!window->ShouldWindowClose())
     {
@@ -283,22 +296,23 @@ int main(){
         gridShader.SetUniformMat4f("u_proj", proj);
         renderer->RenderGrid(gridShader);
 
-        // shaderCube.Bind();
-        // shaderCube.SetUniformMat4f("u_mvp",mvp);
-        // renderer->RenderMesh(cubeMesh,shaderCube);
-
         shaderSphere.Bind();
         shaderSphere.SetUniformMat4f("u_mvp",mvp);
         renderer->RenderMesh(sphereMesh,shaderSphere);
 
-        // lineVAO.Bind();
-        // lineShader.Bind();
-        // lineShader.SetUniformMat4f("u_mvp",mvp);
-        // glLineWidth(1.5f); // 5 pikseli
-        // glDrawArrays(GL_LINES, 0, 2);
+        lineVAO.Bind();
+        lineShader.Bind();
+        lineShader.SetUniformMat4f("u_mvp",mvp);
+        glLineWidth(1.5f);
+        glDrawArrays(GL_LINES, 0, 2);
+        glLineWidth(1.0f);
 
 
 
+        // shaderCube.Bind();
+        // shaderCube.SetUniformMat4f("u_mvp",mvp);
+        // renderer->RenderMesh(cubeMesh,shaderCube);
+        
         gui->OnBegin();
 
             //Customizing gui...
@@ -308,7 +322,7 @@ int main(){
                 ImGui::Begin("Debug");
 
                     ImGui::Text("Window control");
-                    ImGui::Text("Resolution: %d x %d",DEFAULT_WEIGHT, DEFAULT_HEIGHT);
+                    ImGui::Text("Resolution: %d x %d",window->GetWidth(), window->GetHeight());
                     ImGui::Separator();
 
                     ImGui::PushID(0);
