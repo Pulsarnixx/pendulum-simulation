@@ -2,12 +2,18 @@
 
 #include <string>
 
+
 #define DEFAULT_HEIGHT 900
 #define DEFAULT_WEIGHT 1600
 #define DEFAULT_TITLE  "Title"
 
 //Forward dec.
 class GLFWwindow;
+typedef void (*GLFWframebuffersizefun)(GLFWwindow*, int, int);
+typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
+typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
+typedef void (* GLFWscrollfun)(GLFWwindow*,double,double);
+
 
 class Window{
 
@@ -37,8 +43,12 @@ public:
     void onUpdate() const;
     void SetWindowDetails(unsigned int width, unsigned int height, const std::string& title);
 
-private:
-    void SetupCallBacks();
+    //GLFW Call Backs
+
+    void SetFrameBufferSizeCallBack(GLFWframebuffersizefun fun) const; 
+    void SetKeyCallBack(GLFWkeyfun fun) const; 
+    void SetCursorPostionCallBack(GLFWcursorposfun fun) const;
+    void SetScrollCallBack(GLFWscrollfun fun) const;
 
 private:
 

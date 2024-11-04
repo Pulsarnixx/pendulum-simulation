@@ -11,7 +11,7 @@
 #endif
 
 void Renderer::BeginRender() const {
-    glClearColor(0.792f, 0.914f, 0.965f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

@@ -1,12 +1,17 @@
 #pragma once
 
+
+
 //-------CORE-------------------------------
 #include "log/log.hpp"
 #include "timers/TimeManager.hpp"
 
+//-------DEPENDECIES------------------------
+#include <GLFW/glfw3.h>
+
 //-------MATH-------------------------------
 #include <glm/gtc/matrix_transform.hpp>
-#include "glad.h"      //gl functions
+
 
 //-------END CORE---------------------------
 

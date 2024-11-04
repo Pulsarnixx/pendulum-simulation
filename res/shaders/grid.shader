@@ -1,47 +1,80 @@
 #shader vertex
 #version 330 core
 
-
 uniform mat4 u_view;
 uniform mat4 u_proj;
 
-const vec3 position[4] = vec3[4](
-   vec3(-1.0, 0.0, -1.0),
-   vec3(1.0, 0.0,  -1.0),
-   vec3(1.0,  0.0, 1.0),
-   vec3(-1.0,  0.0, 1.0)
+out vec3 nearPoint;
+out vec3 farPoint;
+out mat4 fragView;
+out mat4 fragProj;
+
+// Grid position are in xy clipped space
+vec3 gridPlane[6] = vec3[6](
+   vec3( 1.0,  1.0, 0.0), 
+   vec3(-1.0, -1.0, 0.0), 
+   vec3(-1.0,  1.0, 0.0),
+   vec3(-1.0, -1.0, 0.0), 
+   vec3( 1.0,  1.0, 0.0), 
+   vec3( 1.0, -1.0, 0.0)
 );
 
-const int indicies[6] = int[6](
-   0, 1, 2,
-   2, 3, 0
-);
-
-
-mat4 createScaleMatrix(float scale) {
-    return mat4(
-        scale, 0.0,   0.0, 0.0,
-        0.0,  scale,  0.0, 0.0,
-        0.0,  0.0,    scale, 0.0,
-        0.0,  0.0,    0.0,  1.0
-    );
+vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
+    mat4 viewInv = inverse(view);
+    mat4 projInv = inverse(projection);
+    vec4 unprojectedPoint =  viewInv * projInv * vec4(x, y, z, 1.0);
+    return unprojectedPoint.xyz / unprojectedPoint.w;
 }
 
-void main()
-{
-   mat4 scaleMat = createScaleMatrix(5.0);
-   int Index = indicies[gl_VertexID];
-   vec4 vPos = vec4(position[Index], 1.0);
-   gl_Position = u_proj * u_view * scaleMat * vPos;
-};
+// normal vertice projection
+void main() {
+
+   vec3 p = gridPlane[gl_VertexID].xyz;
+   nearPoint = UnprojectPoint(p.x, p.y, 0.0, u_view, u_proj).xyz; // unprojecting on the near plane
+   farPoint = UnprojectPoint(p.x, p.y, 1.0, u_view, u_proj).xyz; // unprojecting on the far plane
+   fragView = u_view;
+   fragProj = u_proj;
+   gl_Position = vec4(p, 1.0);
+}
+
 
 #shader fragment
 #version 330 core
 
+//From vertex shader
+in vec3 nearPoint; 
+in vec3 farPoint;
+in mat4 fragView;
+in mat4 fragProj;
+
 out vec4 color;
+
+vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
+    vec2 coord = fragPos3D.xz * scale; // use the scale variable to set the distance between the lines
+    vec2 derivative = fwidth(coord);
+    vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
+    float line = min(grid.x, grid.y);
+    float minimumz = min(derivative.y, 1);
+    float minimumx = min(derivative.x, 1);
+    vec4 color = vec4(0.2, 0.2, 0.2, 1.0 - min(line, 1.0));
+    // z axis
+    if(fragPos3D.x > -0.1 * minimumx && fragPos3D.x < 0.1 * minimumx)
+        color.z = 1.0;
+    // x axis
+    if(fragPos3D.z > -0.1 * minimumz && fragPos3D.z < 0.1 * minimumz)
+        color.x = 1.0;
+    return color;
+}
+
+float computeDepth(vec3 pos) {
+    vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
+    return (clip_space_pos.z / clip_space_pos.w);
+}
 
 void main()
 {
-
-   color = vec4(0.827, 0.827, 0.827, 1.0);
+    float t = -nearPoint.y / (farPoint.y - nearPoint.y);
+    vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
+    gl_FragDepth = computeDepth(fragPos3D);
+    color = grid(fragPos3D, 10, true) * float(t > 0);
 };
