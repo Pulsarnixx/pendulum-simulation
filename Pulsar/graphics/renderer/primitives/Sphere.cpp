@@ -25,12 +25,13 @@
     r = const.
 
 */
-Sphere::Sphere(Vector3f center, float radius, int sectorsNumber, int stacksNumber)
-:m_Center(center){
+Sphere::Sphere(float radius, int sectorsNumber, int stacksNumber)
+:m_Position(glm::vec3(0.0f)),m_Scale(glm::vec3(1.0f)),m_Rotation(glm::vec3(0.0f))
+{
 
 #ifdef DEBUG
-        message = "[SPHERE] Center point: " + std::to_string(m_Center.x) + " " + 
-                                std::to_string(m_Center.y) + " " + std::to_string(m_Center.z);
+        message = "[SPHERE] Center point: " + std::to_string(m_Position.x) + " " + 
+                                std::to_string(m_Position.y) + " " + std::to_string(m_Position.z);
         PX_CORE_TRACE(message);
 #endif
 
@@ -48,14 +49,14 @@ float sectorAngle, stackAngle;
     
     stackAngle = (M_PI / 2) - (i * stackStep);    //stackAngle = [-π/2, π/2]. Startring from π/2 to -π/2
     xy = radius * cos(stackAngle);
-    z  = m_Center.z + (radius * sin(stackAngle)); //calculated here, because there is no need for sector angle
+    z  = m_Position.z + (radius * sin(stackAngle)); //calculated here, because there is no need for sector angle
 
     for (int j = 0; j <= sectorsNumber; ++j) {
         sectorAngle = j * sectorStep;            //sectorAngle = [0, 2π] Startring from 0 to 2π
 
         //vertex positions
-        x = m_Center.x + (xy * cos(sectorAngle));
-        y = m_Center.y + (xy * sin(sectorAngle));
+        x = m_Position.x + (xy * cos(sectorAngle));
+        y = m_Position.y + (xy * sin(sectorAngle));
 
         m_Vertices.push_back(x);
         m_Vertices.push_back(y);
@@ -103,4 +104,25 @@ for(int i = 0; i < stacksNumber; ++i)
         PX_CORE_TRACE(message);
   #endif
 
+}
+
+glm::mat4 Sphere::getModelMatrix() const{
+
+    glm::mat4 model = glm::mat4(1.0f);
+
+    calculateModelMatrix(model);
+
+    return model;
+
+}
+
+void Sphere::calculateModelMatrix(glm::mat4& model) const {
+
+    glm::mat4 trans = glm::translate(glm::mat4(1.0f), m_Position);
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_Scale);
+    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f),  glm::radians(m_Rotation.x), glm::vec3(1.0f,0.0f,0.0f));   //X-axis rotation
+              rotation = glm::rotate(rotation,  glm::radians(m_Rotation.y), glm::vec3(0.0f,1.0f,0.0f));          //Y-axis rotation
+              rotation = glm::rotate(rotation, glm::radians(m_Rotation.z), glm::vec3(0.0f,0.0f,1.0f));           //Z-axis rotation
+    
+    model  = trans * rotation * scale;
 }
