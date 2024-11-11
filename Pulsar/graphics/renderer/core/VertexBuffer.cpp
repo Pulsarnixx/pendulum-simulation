@@ -22,3 +22,8 @@ void VertexBuffer::Bind() const {
 void VertexBuffer::UnBind() const {
     glBindBuffer(GL_ARRAY_BUFFER,0);
 }
+
+void VertexBuffer::UpdateData(const void* data, unsigned int size) const {
+    glBindBuffer(GL_ARRAY_BUFFER,m_ID);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);  // Aktualizacja danych linii 1
+}

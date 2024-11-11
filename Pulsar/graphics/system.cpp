@@ -74,7 +74,7 @@ void System::Init(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    CreateWindow(DEFAULT_WEIGHT,DEFAULT_HEIGHT,"Application");
+    CreateWindow(1600,900,"Application");
 
     if(m_Window == nullptr)
         ShutDown();
@@ -93,16 +93,29 @@ void System::Init(){
     m_isGLADInitilized = true;
     PX_CORE_INFO("GLAD initialization success!");
 
-    glViewport(0,0,DEFAULT_WEIGHT,DEFAULT_HEIGHT);
-
-
-    //Enable Depth test
-    glEnable(GL_DEPTH_TEST);
-    
+    glViewport(0,0,1600,900);
 
     CreateRender();
     if(m_Renderer == nullptr)
         ShutDown();
+
+    //Enable Depth test
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
+    
+    glEnable(GL_DEPTH_TEST);
+  
+    PrintPlatformDetails();
+}
+
+void System::InitUI(){
+
+    assert(s_Instance);
+
+    if(m_Window == nullptr || m_Renderer == nullptr){
+        PX_CORE_ERROR("Initialize window and renderer first!");
+        return;
+    }
 
     // // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -111,8 +124,9 @@ void System::Init(){
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(currentWindow, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowGLFW(), true);
     ImGui_ImplOpenGL3_Init();
 
     m_isIMGUIInitialized = true;
@@ -121,8 +135,7 @@ void System::Init(){
     CreateGUI();
     if(m_Gui == nullptr)
         ShutDown();
-  
-    PrintPlatformDetails();
+
 }
 
 void System::ShutDown(){

@@ -1,11 +1,5 @@
 #include "Mesh.hpp"
 
-#include "renderer/core/VertexArray.hpp"
-#include "renderer/core/VertexBuffer.hpp"
-#include "renderer/core/VertexBufferLayout.hpp"
-#include "renderer/core/IndexBuffer.hpp"
-#include "renderer/core/Textures.hpp"
-
 #define DEBUG
 
 #ifdef DEBUG
@@ -23,8 +17,8 @@ Mesh::Mesh(const void* verticesData, unsigned int verticesSize, const unsigned i
 
     //Vertex attributes
     VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(2);
+    layout.Push<float>(3);  //positions
+    layout.Push<float>(2);  //texture coorinates (uv)
 
     this->m_VAO->AddBuffer(*(this->m_VBO), layout);
 
@@ -52,7 +46,7 @@ Mesh::Mesh(const void* verticesData, unsigned int verticesSize)
 
     //Vertex attributes
     VertexBufferLayout layout;
-    layout.Push<float>(3);
+    layout.Push<float>(3);  //positions
 
     this->m_VAO->AddBuffer(*(this->m_VBO), layout);
 
@@ -116,4 +110,11 @@ void Mesh::UnBind(){
     if(this->m_EBO != nullptr)
         this->m_EBO->UnBind();
 
+}
+
+void Mesh::UpdateData(const void* data, unsigned int size) const{
+
+    if(this->m_VAO != nullptr && this->m_VBO != nullptr){
+        m_VBO->UpdateData(data,size);
+    }
 }

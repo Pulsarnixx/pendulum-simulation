@@ -1,7 +1,6 @@
 #include "window.hpp"
 
-#include "glad.h"
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h> //glfw functions
 
 #undef DEBUG
 
@@ -10,98 +9,25 @@
 #endif
 
 /*
-    GLFW CALL BACKS FUNTTIONS
+    TO DO:
+
+    * create Event manager
+    * extract  glfwPollEvents(); from Window class
+
 */
-
-void FrameBufferCallBack(GLFWwindow* window, int width, int height){
-    
-    #ifdef DEBUG
-        std::string s = "[FrameBuffer] resolution: " + std::to_string(width) + " x " + std::to_string(height);
-        PX_CORE_TRACE(s);
-    #endif
- 
-    glViewport(0, 0, width, height);
-    
-}
-
-void KeyInputCallBack(GLFWwindow* window, int key, int scancode, int action, int mods){
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-
-        #ifdef DEBUG
-            PX_CORE_TRACE("[Keyboard] pressed: ESCAPE");
-        #endif
-        
-        glfwSetWindowShouldClose(window,GLFW_TRUE);
-    }
-
-    if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        #ifdef DEBUG
-             PX_CORE_TRACE("[Keyboard] pressed: W");
-        #endif
-       
-    if (key == GLFW_KEY_S && action == GLFW_PRESS){
-        #ifdef DEBUG
-            PX_CORE_TRACE("[Keyboard] pressed: S");
-        #endif
-
-    }
-    if (key == GLFW_KEY_D && action == GLFW_PRESS){
-        #ifdef DEBUG
-            PX_CORE_TRACE("[Keyboard] pressed: D");
-        #endif
-
-    }
-    if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        #ifdef DEBUG
-            PX_CORE_TRACE("[Keyboard] pressed: A");
-        #endif
-        
-    }
-}
-
-void MouseCallBack(GLFWwindow* window, double xposIn, double yposIn){
-
-    #ifdef DEBUG
-        std::string s = "[Mouse] position: " + std::to_string(xposIn) + " " + std::to_string(yposIn);
-        PX_CORE_TRACE(s);
-    #endif
-}  
-
-void ScrollCallBack(GLFWwindow* window, double xpos2, double ypos2){
-
-    #ifdef DEBUG
-        std::string s = "[Mouse Scroll] values: " + std::to_string(xpos2) + " " + std::to_string(ypos2);
-        PX_CORE_TRACE(s);
-    #endif
-
-}  
-
 
 /*
     CLASS WINDOW FUNTION
-*/
-Window::Window(){
-
-    m_Window = glfwCreateWindow(DEFAULT_WEIGHT, DEFAULT_HEIGHT, DEFAULT_TITLE, NULL, NULL);
-    m_Width  = DEFAULT_WEIGHT;
-    m_Height = DEFAULT_HEIGHT;
-    m_Title  = DEFAULT_TITLE;
-
-    SetupCallBacks();
-
-}
+// */
 
 Window::Window(unsigned int width, unsigned int height, const std::string& title){
 
     m_Window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-    m_Width  = DEFAULT_WEIGHT;
-    m_Height = DEFAULT_HEIGHT;
+    m_Width  = width;
+    m_Height = height;
     m_Title  = title.c_str();
 
-    SetupCallBacks();
 }
-
 
 Window::~Window(){
     
@@ -113,28 +39,16 @@ void Window::SetVsync(bool option) const { glfwSwapInterval(option); }
 
 bool Window::ShouldWindowClose() const { return glfwWindowShouldClose(m_Window); }
 
-void Window::onEvents() const { glfwPollEvents(); }// glfwPollEvents should be for Event manager
+void Window::onEvents() const {  glfwPollEvents(); }
 
-void Window::onUpdate() const { glfwSwapBuffers(m_Window);} 
+void Window::onUpdate() const { glfwSwapBuffers(m_Window); } 
 
-void Window::SetWindowDetails(unsigned int width, unsigned int height, const std::string& title){
+//GLFW Call Backs
+void Window::SetFrameBufferSizeCallBack(GLFWframebuffersizefun fun) const { glfwSetFramebufferSizeCallback(m_Window, fun); }
+void Window::SetKeyCallBack(GLFWkeyfun fun) const {  glfwSetKeyCallback(m_Window,fun); }
+void Window::SetCursorPostionCallBack(GLFWcursorposfun fun) const { glfwSetCursorPosCallback(m_Window, fun); }
+void Window::SetScrollCallBack(GLFWscrollfun fun) const {  glfwSetScrollCallback(m_Window, fun); }
 
-    if(m_Window == nullptr) 
-        return;
-
-    glfwSetWindowSize(m_Window, width, height);
-    glViewport(0,0,width,height);
-
-    glfwSetWindowTitle(m_Window,title.c_str());
- }
-
-void Window::SetupCallBacks(){
-
-    glfwSetFramebufferSizeCallback(m_Window, FrameBufferCallBack);
-    glfwSetKeyCallback(m_Window,KeyInputCallBack);
-    glfwSetCursorPosCallback(m_Window, MouseCallBack);
-    glfwSetScrollCallback(m_Window, ScrollCallBack);
-}
  
 
 

@@ -4,31 +4,44 @@
 #include "core/Mesh.hpp"
 #include "shader.hpp"
 
-#include "../../core/log/log.hpp" //Logging
 
+#define DEBUG
+#ifdef DEBUG
+    #include "../../core/log/log.hpp" //Logging
+#endif
 
 void Renderer::BeginRender() const {
-    glClearColor(0.792f, 0.914f, 0.965f, 1.0f);
+    glClearColor(0.70f, 0.70f, 0.70f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::Render(Mesh& mesh, Shader& shaderProgram) const{
+void Renderer::RenderGrid(Shader& shaderProgram) const{
 
-    GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
-    mesh.Bind();
     shaderProgram.Bind();
     
-    //FOR VBO only
-    glDrawArrays(GL_LINE_STRIP, 0, verticiesNumber);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
 }
 
-void Renderer::RenderIndicies(Mesh& mesh, Shader& shaderProgram) const{
+void Renderer::RenderMesh(Mesh& mesh, Shader& shaderProgram) const{
 
     GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
     mesh.Bind();
     shaderProgram.Bind();
-    //For VBO + EBO
-    glDrawElements(GL_TRIANGLES, verticiesNumber, GL_UNSIGNED_INT, 0);
+
+    glDrawElements(GL_TRIANGLE_STRIP, verticiesNumber, GL_UNSIGNED_INT, 0);
+
 }
+
+void Renderer::RenderCircle(Mesh& mesh, Shader& shaderProgram) const{
+
+    GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
+    mesh.Bind();
+    shaderProgram.Bind();
+
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, verticiesNumber);
+
+}
+
 

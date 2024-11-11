@@ -16,6 +16,7 @@ public:
         //Utilities
         void Bind() const ;
         void UnBind() const ;
+        void UpdateData(const void* data, unsigned int size) const;
         unsigned int GetID() const { return m_ID; }
 
 private:

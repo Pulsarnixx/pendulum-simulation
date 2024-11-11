@@ -54,6 +54,14 @@ void Shader::SetUniform1i(const std::string& name, int v0){
     if(location != -1)
         glUniform1i(location, v0);
 }
+
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2){
+    int location = GetUniformLocation(name);
+
+    if(location != -1)
+        glUniform3f(location, v0, v1, v2);
+}
+
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3 ){
     int location = GetUniformLocation(name);
 
