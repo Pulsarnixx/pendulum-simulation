@@ -26,6 +26,7 @@ public:
     //Utilities
     void Bind();
     void UnBind();
+    void UpdateData(const void* data, unsigned int size) const;
     inline unsigned int  GetVerticiesNumber() const { return m_VerticesNumber; }
 
 private:

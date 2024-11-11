@@ -7,6 +7,7 @@
 #include "timers/TimeManager.hpp"
 
 //-------DEPENDECIES------------------------
+#include <glad.h>
 #include <GLFW/glfw3.h>
 
 //-------MATH-------------------------------
@@ -29,7 +30,9 @@
 #include "renderer/core/Mesh.hpp"
 
 //-------RENDERER PRIMITIVES----------------
+#include "renderer/primitives/Circle.hpp"
 #include "renderer/primitives/Square.hpp"
+
 #include "renderer/primitives/Cube.hpp"
 #include "renderer/primitives/Sphere.hpp"
 

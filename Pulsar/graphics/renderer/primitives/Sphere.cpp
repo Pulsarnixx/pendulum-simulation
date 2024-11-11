@@ -5,7 +5,7 @@
 #define DEBUG
 #ifdef DEBUG
     #include "../../../core/log/log.hpp"
-    std::string message;
+    static std::string message;
 #endif
 
 /*

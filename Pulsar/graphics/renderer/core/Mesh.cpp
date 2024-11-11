@@ -47,7 +47,6 @@ Mesh::Mesh(const void* verticesData, unsigned int verticesSize)
     //Vertex attributes
     VertexBufferLayout layout;
     layout.Push<float>(3);  //positions
-    layout.Push<float>(2);  //texture coorinates (uv)
 
     this->m_VAO->AddBuffer(*(this->m_VBO), layout);
 
@@ -111,4 +110,11 @@ void Mesh::UnBind(){
     if(this->m_EBO != nullptr)
         this->m_EBO->UnBind();
 
+}
+
+void Mesh::UpdateData(const void* data, unsigned int size) const{
+
+    if(this->m_VAO != nullptr && this->m_VBO != nullptr){
+        m_VBO->UpdateData(data,size);
+    }
 }
