@@ -31,7 +31,6 @@
 
 //-------RENDERER PRIMITIVES----------------
 #include "renderer/primitives/Circle.hpp"
-#include "renderer/primitives/Square.hpp"
 
 #include "renderer/primitives/Cube.hpp"
 #include "renderer/primitives/Sphere.hpp"
