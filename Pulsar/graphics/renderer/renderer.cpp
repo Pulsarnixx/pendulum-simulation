@@ -33,6 +33,17 @@ void Renderer::RenderMesh(Mesh& mesh, Shader& shaderProgram) const{
 
 }
 
+void Renderer::RenderLine(Mesh& mesh, Shader& shaderProgram) const{
+
+    GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
+    mesh.Bind();
+    shaderProgram.Bind();
+
+    glLineWidth(2.5f);
+    glDrawArrays(GL_LINES, 0, verticiesNumber);
+
+}
+
 void Renderer::RenderCircle(Mesh& mesh, Shader& shaderProgram) const{
 
     GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();

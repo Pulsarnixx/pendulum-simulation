@@ -1,5 +1,5 @@
 #include "simulation2D.hpp"
-#include "simulation3D.hpp"
+// #include "simulation3D.hpp"
 
 #include <cstdio> //fprintf
 #include <memory>
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     switch (choise)
     {
         case '1': sim = std::make_unique<Simulation2D>();  break;
-        case '2': sim = std::make_unique<Simulation3D>();  break;
+        // case '2': sim = std::make_unique<Simulation3D>();  break;
         
         default: break;
     }

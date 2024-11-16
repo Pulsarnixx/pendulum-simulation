@@ -1,6 +1,7 @@
 #include "Circle.hpp"
 
 #include <cmath>
+#include <iostream>
 
 #undef DEBUG
 #ifdef DEBUG
@@ -8,57 +9,49 @@
     static std::string message;
 #endif
 
-Circle::Circle(float cx, float cy, float radius, int segments)
-:m_Position(glm::vec3(cx, cy, 0.0f)), m_Translation(glm::vec3(0.0f)),m_Scale(glm::vec3(1.0f))
+Circle::Circle(float x0, float y0, float radius, int segments)
+:m_Center(glm::vec3(x0, y0, 0.0f)), m_Radius(radius), m_Segments(segments)
 {
-
-
-    generatePoints(cx,cy,radius, segments);
-
+    generatePoints(x0,y0,radius, segments);
 }
 
-glm::mat4 Circle::getModelMatrix() const{
 
-    glm::mat4 model = glm::mat4(1.0f);
-
-    calculateModelMatrix(model);
-
-    return model;
-
-}
-
-void Circle::calculateModelMatrix(glm::mat4& model) const {
-
-
-    glm::mat4 trans = glm::translate(glm::mat4(1.0f), m_Translation);
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_Scale);
-    glm::mat4 rotation = glm::mat4(1.0f);
-    model  = trans * rotation * scale;
-}
-
-void Circle::generatePoints(float cx, float cy, float radius, int segments){
+void Circle::generatePoints(float x0, float y0, float radius, int segments){
 
     #ifdef DEBUG
             message = "[CIRCLE] Center point: " + std::to_string(m_Position.x) + " " + 
                                     std::to_string(m_Position.y) + " " + std::to_string(m_Position.z);
             PX_CORE_TRACE(message);
     #endif
-
-    m_Position = glm::vec3(cx,cy,0.0f);
-
+    
     m_Vertices.clear();
+
+    m_Center.x = x0;
+    m_Center.y = y0;
+    m_Center.z = 0.0f;
 
     for (int i = 0; i <= segments; ++i) {
 
         float theta = 2.0f * M_PI * float(i) / float(segments);
-        float x = radius * cosf(theta) + cx;
-        float y = radius * sinf(theta) + cy;
+        float x = radius * cosf(theta) + x0;
+        float y = radius * sinf(theta) + y0;
         float z = 0.0f;
 
         m_Vertices.push_back(x);
         m_Vertices.push_back(y);
         m_Vertices.push_back(z);
 
+        std::cout << "Point: x = " << m_Vertices[i] << ", y = " << m_Vertices[i + 1] << std::endl;
+
+    }
+
 }
+
+void Circle::updatePoints(float x0, float y0){
+
+/*
+    TO DO
+
+*/
 
 }
