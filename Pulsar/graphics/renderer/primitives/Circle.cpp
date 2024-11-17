@@ -41,8 +41,6 @@ void Circle::generatePoints(float x0, float y0, float radius, int segments){
         m_Vertices.push_back(y);
         m_Vertices.push_back(z);
 
-        std::cout << "Point: x = " << m_Vertices[i] << ", y = " << m_Vertices[i + 1] << std::endl;
-
     }
 
 }

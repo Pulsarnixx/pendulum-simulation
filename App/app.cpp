@@ -1,4 +1,5 @@
 #include "simulation2D.hpp"
+#include "numerical_eq.hpp"
 // #include "simulation3D.hpp"
 
 #include <cstdio> //fprintf
@@ -17,6 +18,12 @@ int main(int argc, char* argv[]){
         Error("Wrong option! 1 - 2D simulation, 2 - 3D simulation\n");
         return 1;
     }
+
+    /*
+        TEST FIRST
+    */
+    RunTests();
+
 
     char choise = *argv[1];
     std::unique_ptr<Simulation> sim;

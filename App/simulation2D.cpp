@@ -1,4 +1,5 @@
 #include "simulation2D.hpp"
+#include "pendulum.hpp"
 
 #include "Pulsar.hpp"
 
@@ -22,96 +23,49 @@ static void FrameBufferCallBack(GLFWwindow* window, int width, int height){
 static const double g = 9.81;
 static const double dt = 0.025;
 
-struct SinglePendulum{
-  
-    //Rods lengths
-    float l;
+//Starting point
+static double x_0 = double(Width) / 2;
+static double y_0 = double(Height) * 0.75;
 
-    //Angles
-    float thetha;
-
-    //Masses
-    float m;
-
-    //Diameter of masses
-    float r;
-
-    //Positions
-    float x,y;
-
-    //Speeds
-    float v;
-};
-
-struct DoublePendulum{
-    
-    //Rods lengths
-    float l1,l2;
-
-    //Angles
-    float thetha1, thetha2;
-
-    //Masses
-    float m1,m2;
-
-    //Diameter of masses
-    float r1,r2;
-
-    //Positions
-    float x1,y1;
-    float x2,y2;
-
-    //Speeds
-    float v1,v2;
-
-};
-
-void InitPendulum(float x0, float y0, SinglePendulum& pendulum){
-
-    pendulum.l = 500.0;
-    pendulum.thetha = glm::radians(30.0);
-    pendulum.v = 0.0;
-
-    pendulum.x = x0 + ( pendulum.l * sinf(pendulum.thetha));
-    pendulum.y = y0 - ( pendulum.l * cosf(pendulum.thetha));
-
-    pendulum.r = 25.0;
-}
-
-void InitDoublePendulum(float x0, float y0, DoublePendulum& pendulum){
-
-    pendulum.l1 = 200.0;
-    pendulum.l2 = 200.0;
-
-    pendulum.thetha1 = glm::radians(45.0);
-    pendulum.thetha2 = glm::radians(30.0);
-
-    pendulum.v1 = 0.0;
-    pendulum.v2 = 0.0;
-
-    pendulum.x1 = x0 + ( pendulum.l1 * sinf(pendulum.thetha1));
-    pendulum.y1 = y0 - ( pendulum.l1 * cosf(pendulum.thetha1));
-
-    pendulum.x2 = pendulum.x1 + ( pendulum.l2 * sinf(pendulum.thetha2));
-    pendulum.y2 = pendulum.y1 - ( pendulum.l2 * cosf(pendulum.thetha2));
-
-    pendulum.r1 = 25.0;
-    pendulum.r2 = 25.0;
-}
 
 void SimulatePendulumEuler(SinglePendulum& pendulum){
 
-    float a = -(g / pendulum.l) * pendulum.thetha;
-    pendulum.v = pendulum.v + (a * dt);    
-    pendulum.thetha = pendulum.thetha + (pendulum.v * dt); 
+    //Calculate properties in polar coordinates
+    float thethaddot = -(g / pendulum.l) * sin(pendulum.thetha);
+    pendulum.thethadot += (thethaddot * dt);    
+    pendulum.thetha += (pendulum.thethadot * dt);
+
+    //Update cartesian coordinates based on polar coordinates values
+    pendulum.x = x_0 + ( pendulum.l * sinf(pendulum.thetha));
+    pendulum.y = y_0 - ( pendulum.l * cosf(pendulum.thetha));
+}
+
+void SimulatePendulumApprox(SinglePendulum& pendulum){
+
+    //Calculate properties in polar coordinates
+    float thethaddot = -(g / pendulum.l) * pendulum.thetha;
+    pendulum.thethadot += (thethaddot * dt);    
+    pendulum.thetha += (pendulum.thethadot * dt);
+
+    //Update cartesian coordinates based on polar coordinates values
+    pendulum.x = x_0 + ( pendulum.l * sinf(pendulum.thetha));
+    pendulum.y = y_0 - ( pendulum.l * cosf(pendulum.thetha));
+
 }
 
 void SimulateRungeKutta(DoublePendulum& pendulum){
 
-    //Simulation for 1 mass
-    float a = -(g / pendulum.l1) * pendulum.thetha1; // Przyspieszenie kątowe
-    pendulum.v1 += a * dt;    // Aktualizacja prędkości
-    pendulum.thetha1 += pendulum.v1 * dt; // Aktualizacja kąta
+    //Calculate properties in polar coordinates for mass 1
+    float thethaddot = -(g / pendulum.l1) * sin(pendulum.thetha1);
+    pendulum.thethadot1 += (thethaddot * dt);    
+    pendulum.thetha1 += (pendulum.thethadot1 * dt);
+
+    //Update cartesian coordinates based on polar coordinates values for mass 1 and 2
+    pendulum.x1 = x_0 + ( pendulum.l1 * sinf(pendulum.thetha1));
+    pendulum.y1 = y_0 - ( pendulum.l1 * cosf(pendulum.thetha1));
+
+    pendulum.x2 = pendulum.x1 + ( pendulum.l2 * sinf(pendulum.thetha2));
+    pendulum.y2 = pendulum.y1 - ( pendulum.l2 * cosf(pendulum.thetha2));
 }
 
 void Simulation2D::initialize(){
@@ -150,21 +104,19 @@ void Simulation2D::run(){
                     DATA CONFIGURATION 
     ==============================================================    
     */
-        //Starting point
-        float x0 = float(Width) / 2;
-        float y0 = float(Height) * 0.75;
+    
 
         DoublePendulum pendulum;
 
-        InitDoublePendulum(x0,y0,pendulum);
+        InitDoublePendulum(x_0,y_0,pendulum);
         
 
         SinglePendulum single;
 
-        InitPendulum(x0,y0,single);
+        InitPendulum(x_0,y_0,single);
 
-        Line singleLine(x0, y0, 0.0f, single.x, single.y, 0.0f);
-        Line doubleLine1(x0, y0, 0.0f, pendulum.x1, pendulum.y1, 0.0f);
+        Line singleLine(x_0, y_0, 0.0f, single.x, single.y, 0.0f);
+        Line doubleLine1(x_0, y_0, 0.0f, pendulum.x1, pendulum.y1, 0.0f);
         Line doubleLine2(pendulum.x1, pendulum.y1, 0.0f, pendulum.x2, pendulum.y2, 0.0f);
 
         int segments = 100;
@@ -241,11 +193,7 @@ void Simulation2D::run(){
                                 GRAPHICS ADJUSTMENTS
                 ==============================================================    
                 */
-
-                single.x = x0 + ( single.l * sinf(single.thetha));
-                single.y = y0 - ( single.l * cosf(single.thetha));
-
-                singleLine.setPositions( x0, y0, 0.0f, single.x, single.y, 0.0f);
+                singleLine.setPositions( x_0, y_0, 0.0f, single.x, single.y, 0.0f);
                 singleLineMesh.UpdateData(singleLine.getVerticesArrayData(), singleLine.getVerticesArraySize());
 
                 singleCircle.generatePoints(single.x, single.y, single.r, segments);
@@ -262,13 +210,7 @@ void Simulation2D::run(){
                 ==============================================================    
                 */
 
-                pendulum.x1 = x0 + ( pendulum.l1 * sinf(pendulum.thetha1));
-                pendulum.y1 = y0 - ( pendulum.l1 * cosf(pendulum.thetha1));
-
-                pendulum.x2 = pendulum.x1 + ( pendulum.l2 * sinf(pendulum.thetha2));
-                pendulum.y2 = pendulum.y1 - ( pendulum.l2 * cosf(pendulum.thetha2));
-
-                doubleLine1.setPositions(x0, y0, 0.0f, pendulum.x1, pendulum.y1, 0.0f );
+                doubleLine1.setPositions(x_0, y_0, 0.0f, pendulum.x1, pendulum.y1, 0.0f );
                 doubleLine1Mesh.UpdateData(doubleLine1.getVerticesArrayData(), doubleLine1.getVerticesArraySize());
 
 
@@ -345,10 +287,10 @@ void Simulation2D::run(){
                 ImGui::SliderFloat("Thetha (radians)", &single.thetha, 0.0f , 2 * M_PI);
 
                 ImGui::Text("Single pendulum data");
-                ImGui::BulletText("Rod length: %f", &single.l);
-                ImGui::BulletText("Thetha (radians): %f", &single.thetha);
+                ImGui::BulletText("Rod length: %f", single.l);
+                ImGui::BulletText("Thetha (radians): %f", single.thetha);
                 ImGui::BulletText("Position (x,y): %f, %f", single.x , single.y);
-                ImGui::BulletText("Speed: %f", single.v);
+                ImGui::BulletText("Angular velocity: %f", single.thethadot);
 
                 ImGui::PopID();
             }
@@ -363,14 +305,14 @@ void Simulation2D::run(){
 
 
                 ImGui::Text("Double pendulum data");
-                ImGui::BulletText("Rod length 1: %f", &pendulum.l1);
-                ImGui::BulletText("Rod length 2: %f", &pendulum.l2);
-                ImGui::BulletText("Thetha 1 (radians): %f", &pendulum.thetha1);
-                ImGui::BulletText("Thetha 2 (radians): %f", &pendulum.thetha2);
+                ImGui::BulletText("Rod length 1: %f", pendulum.l1);
+                ImGui::BulletText("Rod length 2: %f", pendulum.l2);
+                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.thetha1);
+                ImGui::BulletText("Thetha 2 (radians): %f", pendulum.thetha2);
                 ImGui::BulletText("Position 1 (x,y): %f, %f", pendulum.x1 , pendulum.y1);
                 ImGui::BulletText("Position 2 (x,y): %f, %f", pendulum.x2  , pendulum.y2);
-                ImGui::BulletText("Speed 1 : %f", pendulum.v1);
-                ImGui::BulletText("Speed 2 : %f", pendulum.v2);
+                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thethadot1);
+                ImGui::BulletText("Angular velocity 2 : %f", pendulum.thethadot2);
 
                
 
@@ -384,9 +326,9 @@ void Simulation2D::run(){
             if (ImGui::Button("Reset")){
 
                 if(isSinglePendulum == true)
-                    InitPendulum(x0,y0,single);
+                    InitPendulum(x_0,y_0,single);
                 else
-                    InitDoublePendulum(x0,y0,pendulum);
+                    InitDoublePendulum(x_0,y_0,pendulum);
             }
 
             ImGui::End();
