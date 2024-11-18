@@ -1,41 +1,99 @@
 #include "pendulum.hpp"
 
+#include <iostream>
 #include "Pulsar.hpp"
 
-void InitPendulum(float x0, float y0, SinglePendulum& pendulum){
-    
-    pendulum.m = 25.0;
-    pendulum.r = 25.0;
+//Physics const.
+static const double g = 9.81;
+static const double dt = 0.016;
 
-    pendulum.l = 500.0;
-    pendulum.thetha = glm::radians(30.0);
-    pendulum.thethadot = 0.0;
+SinglePendulum::SinglePendulum(float x0, float y0, double m, double l, double init_theta, double init_thetadot)
+:m(m), l(l), theta(glm::radians(init_theta)), thetadot(init_thetadot), x0(x0), y0(y0)
+{
+    //Calculate initial cartesian coordinates based on polar coordinates values
+    x = x0 + ( l * sin(theta));
+    y = y0 - ( l * cos(theta));
+}
 
-    pendulum.x = x0 + ( pendulum.l * sinf(pendulum.thetha));
-    pendulum.y = y0 - ( pendulum.l * cosf(pendulum.thetha));
+void SinglePendulum::displayParameters(){
+
+    std::cout << "Single Pendulum parameters: \n";
 
 }
 
-void InitDoublePendulum(float x0, float y0, DoublePendulum& pendulum){
 
-    pendulum.m1 = 25.0;
-    pendulum.m2 = 25.0;
+DoublePendulum::DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,double init_theta2,double init_thetadot1, double init_thetadot2)
+:m1(m1), m2(m2), l1(l1), l2(l2),theta1(glm::radians(init_theta1)), theta2(glm::radians(init_theta2)), thetadot1(init_thetadot1), thetadot2(init_thetadot2), x0(x0), y0(y0)
+{
 
-    pendulum.r1 = 25.0;
-    pendulum.r2 = 25.0;
+    //Calculate initial cartesian coordinates based on polar coordinates values
+    x1 = x0 + ( l1 * sin(theta1));
+    y1 = y0 - ( l1 * cos(theta1));
 
-    pendulum.l1 = 200.0;
-    pendulum.l2 = 200.0;
+    x2 = x0 + (  l1 * sin(theta1)) + (  l2 * sin(theta2));
+    y2 = y0 - (  l1 * cos(theta1)) - (  l2 * cos(theta2));
 
-    pendulum.thetha1 = glm::radians(45.0);
-    pendulum.thetha2 = glm::radians(30.0);
+}
 
-    pendulum.thethadot1 = 0.0;
-    pendulum.thethadot2 = 0.0;
+void DoublePendulum::displayParameters(){
 
-    pendulum.x1 = x0 + ( pendulum.l1 * sinf(pendulum.thetha1));
-    pendulum.y1 = y0 - ( pendulum.l1 * cosf(pendulum.thetha1));
+    std::cout << "Double Pendulum parameters: \n";
 
-    pendulum.x2 = pendulum.x1 + ( pendulum.l2 * sinf(pendulum.thetha2));
-    pendulum.y2 = pendulum.y1 - ( pendulum.l2 * cosf(pendulum.thetha2));
+}
+
+void ResetPendulum(SinglePendulum& pendulum){}
+
+void ResetPendulum(DoublePendulum& pendulum){}
+
+void SimulatePendulumEuler(SinglePendulum& pendulum){
+
+    //Calculate properties in polar coordinates
+    double thetaddot = -(g / pendulum.l) * sin(pendulum.theta);
+    pendulum.thetadot += (thetaddot * dt);    
+    pendulum.theta += (pendulum.thetadot * dt);
+
+    //Update cartesian coordinates based on polar coordinates values
+    pendulum.x = pendulum.x0 + ( pendulum.l * sin(pendulum.theta));
+    pendulum.y = pendulum.y0 - ( pendulum.l * cos(pendulum.theta));
+}
+
+void SimulatePendulumApprox(SinglePendulum& pendulum){
+
+    //Calculate properties in polar coordinates
+    double thetaddot = -(g / pendulum.l) * pendulum.theta;
+    pendulum.thetadot += (thetaddot * dt);    
+    pendulum.theta += (pendulum.thetadot * dt);
+
+    //Update cartesian coordinates based on polar coordinates values
+    pendulum.x = pendulum.x0 + ( pendulum.l * sin(pendulum.theta));
+    pendulum.y = pendulum.y0 - ( pendulum.l * cos(pendulum.theta));
+
+}
+
+void SimulatePendulumEuler(DoublePendulum& pendulum){
+
+    //Calculation helpful expressions 
+    double a = ( -1 * (pendulum.m1 + pendulum.m2) * g * sin(pendulum.theta1) ) -( pendulum.m2 * pendulum.l2 * pendulum.thetadot2 * pendulum.thetadot2 * sin(pendulum.theta1 - pendulum.theta2) );
+    double b = (pendulum.m1 + pendulum.m2) * pendulum.l1;
+    double c = pendulum.m2 * pendulum.l2 * cos(pendulum.theta1 - pendulum.theta2);
+    double d = -1 * g * sin(pendulum.theta2) + pow(pendulum.thetadot1,2) * pendulum.l1 * sin(pendulum.theta1 - pendulum.theta2);
+    double e = pendulum.l1 * cos(pendulum.theta1 - pendulum.theta2);
+    double f = pendulum.l2;
+
+    //Calculate properties in polar coordinates for both masses
+    double thetaddot2 = (d - (e * a)) / (f - (e*c));
+    double thetaddot1 = (a - (c * thetaddot2)) / b;
+
+    pendulum.thetadot2 = pendulum.thetadot2 + dt * thetaddot2;
+    pendulum.theta2 = pendulum.theta2 + dt * pendulum.thetadot2;
+
+    pendulum.thetadot1 = pendulum.thetadot1 + dt * thetaddot1;
+    pendulum.theta1 = pendulum.theta1 + dt * pendulum.thetadot1;
+
+    //Update cartesian coordinates based on polar coordinates values for both masses
+    pendulum.x1 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)); 
+    pendulum.y1 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1));
+
+    pendulum.x2 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)) + ( pendulum.l2 * sin(pendulum.theta2));
+    pendulum.y2 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1)) - ( pendulum.l2 * cos(pendulum.theta2));
 }

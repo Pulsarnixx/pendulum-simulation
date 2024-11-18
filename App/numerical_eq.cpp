@@ -128,8 +128,18 @@ void TestPendulumEulerToFile(const char* file_name, double t0, double tmax, doub
     outfile.close();
 }
 
+void TestDoublePendulumEulerToFile( const char* file_name, double t0, double tmax, double dt, 
+                                    double l1, double l2, double m1, double m2,
+                                    double thetha1_0, double thetadot1_0, double thetha2_0, double thetadot2_0)
+{
+
+  
+}
+
 void RunTests(){
 
     TestPendulumApproxToFile("approx.txt", 0.0, 10.0, 0.01, (30.0 * M_PI)/ 180.0 , 0.0f); //30 stopni
     TestPendulumEulerToFile("euler.txt", 0.0, 10.0, 0.01, (30.0 * M_PI)/ 180.0 , 0.0f); //30 stopni
+    // TestDoublePendulumEulerToFile( const char* file_name, double t0, double tmax, double dt, 
+    //                                 double thetha1_0, double thetadot1_0, double thetha2_0, double thetadot2_0);
 }

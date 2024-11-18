@@ -22,4 +22,4 @@ private:
     //Graphics buffer Data
     float m_Vertices[6];
 
-};//class Sphere
+};//class Line
