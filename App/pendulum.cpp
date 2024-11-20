@@ -70,7 +70,6 @@ void SimulatePendulumEuler(SinglePendulum& pendulum){
     pendulum.y = pendulum.y0 - ( pendulum.l * cos(pendulum.theta));
 }
 
-
 void SimulatePendulumRK2(SinglePendulum& pendulum){
 
     //Calcualte k1,k2 parameters for theta and thetadot

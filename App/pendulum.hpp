@@ -58,3 +58,5 @@ void SimulatePendulumRK4(SinglePendulum& pendulum);
     Double pendulum
 */
 void SimulatePendulumEuler(DoublePendulum& pendulum);
+void SimulatePendulumRK2(DoublePendulum& pendulum);
+void SimulatePendulumRK4(DoublePendulum& pendulum);

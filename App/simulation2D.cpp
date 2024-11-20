@@ -75,6 +75,11 @@ void Simulation2D::run(){
 
         bool isSimulationRunning = false;
 
+
+        int   bar_data[11] = {0};
+        float x_data[1000] = {2};
+        float y_data[1000] = {2};
+
     /*
     ==============================================================    
                     DATA CONFIGURATION 
@@ -348,6 +353,12 @@ void Simulation2D::run(){
                 ImGui::BulletText("Angular velocity: %f", single.thetadot);
 
                 ImGui::PopID();
+                
+                if (ImPlot::BeginPlot("My Plot")) {
+                    ImPlot::PlotLine("My Line Plot", x_data, y_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
             }
 
             //Double Pendulum
