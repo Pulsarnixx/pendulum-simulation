@@ -73,6 +73,9 @@ void Simulation2D::run(){
         const char* pendulumNumericEq[] = { "Aprox", "Euler", "RK2", "RK4"};
         int pendulumNumericEqIndex = 0;
 
+        const char* pendulumNumericEq2[] = { "Euler", "RK2", "RK4"};
+        int pendulumNumericEqIndex2 = 0;
+
         bool isSimulationRunning = false;
 
 
@@ -237,8 +240,16 @@ void Simulation2D::run(){
 
             //Double Pendulum
             if(pendulumTypesIndex == 1){
+
+                switch (pendulumNumericEqIndex2)
+                {
+                    case 0: printf("Simulation - Euler\n");  SimulatePendulumEuler(pendulum);; break;
+                    case 1: printf("Simulation - RK2\n"); /*TODO*/ break;
+                    case 2: printf("Simulation - RK4\n"); /*TODO*/  break;
+                    default: printf("Simulation - None\n"); break;
+                }
                 
-                SimulatePendulumEuler(pendulum);
+              
 
                 /*
                 ==============================================================    
@@ -363,12 +374,15 @@ void Simulation2D::run(){
 
             //Double Pendulum
             if(pendulumTypesIndex == 1){
+
+                if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex2, pendulumNumericEq2, IM_ARRAYSIZE(pendulumNumericEq2))) {
+                    printf("Selected: %s\n", pendulumNumericEq2[pendulumNumericEqIndex2]);
+                }
+                
                 ImGui::PushID(0);
 
-                ImGui::Text("Change parameters");
-                double minl1 = 0.0;
-                double maxl1 = 5.0;
-                ImGui::SliderScalar("l1", ImGuiDataType_Double, &pendulum.l1, &minl1, &maxl1, "%.2f");
+                // ImGui::Text("Change parameters");
+                // ImGui::SliderScalar("l1", ImGuiDataType_Double, &pendulum.l1, &minl1, &maxl1, "%.2f");
                 // ImGui::SliderFloat("Rod 1 length", &pendulum.l1, 0.0f , 300.0f);
                 // ImGui::SliderFloat("Rod 2 length", &pendulum.l2, 0.0f , 300.0f);
                 // ImGui::SliderFloat("Thetha 1 (radians)", &pendulum.theta1, 0.0f , 2 * M_PI);
@@ -384,8 +398,6 @@ void Simulation2D::run(){
                 ImGui::BulletText("Position 2 (x,y): %f, %f", pendulum.x2  , pendulum.y2);
                 ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);
                 ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
-
-               
 
                 ImGui::PopID();
             }
