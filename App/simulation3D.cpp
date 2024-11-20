@@ -78,51 +78,51 @@ static void KeyInputCallBack(GLFWwindow* window, int key, int scancode, int acti
  
 }
 
-static void MouseCallBack(GLFWwindow* window, double xposIn, double yposIn){
+// static void MouseCallBack(GLFWwindow* window, double xposIn, double yposIn){
 
-    #ifdef DEBUG
-        std::string s = "[Mouse] position: " + std::to_string(xposIn) + " " + std::to_string(yposIn);
-        PX_CORE_TRACE(s);
-    #endif
+//     #ifdef DEBUG
+//         std::string s = "[Mouse] position: " + std::to_string(xposIn) + " " + std::to_string(yposIn);
+//         PX_CORE_TRACE(s);
+//     #endif
 
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
+//     float xpos = static_cast<float>(xposIn);
+//     float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+//     if (firstMouse)
+//     {
+//         lastX = xpos;
+//         lastY = ypos;
+//         firstMouse = false;
+//     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
+//     float xoffset = xpos - lastX;
+//     float yoffset = lastY - ypos;
 
-    lastX = xpos;
-    lastY = ypos;
+//     lastX = xpos;
+//     lastY = ypos;
 
-    const float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
+//     const float sensitivity = 0.1f;
+//     xoffset *= sensitivity;
+//     yoffset *= sensitivity;
 
-    camera.yaw += xoffset;
-    camera.pitch += yoffset;
+//     camera.yaw += xoffset;
+//     camera.pitch += yoffset;
 
-    camera.yaw   += xoffset;
-    camera.pitch += yoffset;
+//     camera.yaw   += xoffset;
+//     camera.pitch += yoffset;
 
-    if(camera.pitch > 89.0f)
-        camera.pitch = 89.0f;
-    if(camera.pitch < -89.0f)
-        camera.pitch = -89.0f;
+//     if(camera.pitch > 89.0f)
+//         camera.pitch = 89.0f;
+//     if(camera.pitch < -89.0f)
+//         camera.pitch = -89.0f;
 
 
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-    direction.y = sin(glm::radians(camera.pitch));
-    direction.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
-    camera.s_front = glm::normalize(direction);
-}  
+//     glm::vec3 direction;
+//     direction.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+//     direction.y = sin(glm::radians(camera.pitch));
+//     direction.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+//     camera.s_front = glm::normalize(direction);
+// }  
 
 static void ScrollCallBack(GLFWwindow* window, double xpos2, double ypos2){
 
@@ -226,15 +226,15 @@ void Simulation3D::run(){
         glm::vec3 sphere1Point = sphere.getPosition();
         glm::vec3 sphere2Point = sphere2.getPosition();
 
-        float lineVerticies1[] = { 
-            platformPoint.x, platformPoint.y, platformPoint.z, 
-            sphere1Point.x, sphere1Point.y, sphere1Point.z
-        };
+        // float lineVerticies1[] = { 
+        //     platformPoint.x, platformPoint.y, platformPoint.z, 
+        //     sphere1Point.x, sphere1Point.y, sphere1Point.z
+        // };
 
-        float lineVerticies2[] = { 
-            sphere1Point.x, sphere1Point.y, sphere1Point.z, 
-            sphere2Point.x, sphere2Point.y, sphere2Point.z
-        };
+        // float lineVerticies2[] = { 
+        //     sphere1Point.x, sphere1Point.y, sphere1Point.z, 
+        //     sphere2Point.x, sphere2Point.y, sphere2Point.z
+        // };
 
         // VertexArray lineVAO;
         // VertexBuffer lineVBO(lineVerticies, 6 * sizeof(float));

@@ -30,6 +30,7 @@
 #include "renderer/core/Mesh.hpp"
 
 //-------RENDERER PRIMITIVES----------------
+#include "renderer/primitives/Line.hpp"
 #include "renderer/primitives/Circle.hpp"
 
 #include "renderer/primitives/Cube.hpp"

@@ -1,10 +1,13 @@
 #include "simulation2D.hpp"
+#include "pendulum.hpp"
 
 #include "Pulsar.hpp"
+#include "iostream"
 
 //Shader code paths
 #define CIRCLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/circle.shader"
 #define LINE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/line.shader"
+#define TRAIL_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/trail.shader"
 
 //Window resolution
 static unsigned int Width = 1600;
@@ -18,6 +21,22 @@ static void FrameBufferCallBack(GLFWwindow* window, int width, int height){
 
 }
 
+//Starting point
+static double x_0 = double(Width) / 2;
+static double y_0 = double(Height) * 0.75;
+
+
+void updateTrailData(float x, float y, float* trailPosition, int trailElements){
+    
+    for (int i = 0; i < trailElements - 1; ++i) {
+        trailPosition[(trailElements - 1 - i) * 2]     = trailPosition[(trailElements - 2 - i) * 2];     // x
+        trailPosition[(trailElements - 1 - i) * 2 + 1] = trailPosition[(trailElements - 2 - i) * 2 + 1]; // y
+    }
+
+    trailPosition[0] = x;
+    trailPosition[1] = y;
+}
+
 
 void Simulation2D::initialize(){
 
@@ -29,6 +48,12 @@ void Simulation2D::initialize(){
 
 void Simulation2D::run(){
 
+    /*
+    ==============================================================    
+                    SYSTEM CONFIGURATION 
+    ==============================================================    
+    */
+
         const Window* window = System::GetWindow();
         const Renderer* renderer = System::GetRenderer();
 
@@ -36,188 +61,309 @@ void Simulation2D::run(){
         window->SetFrameBufferSizeCallBack(FrameBufferCallBack);
 
         //Window option
-        window->SetVsync(false);
+        window->SetVsync(true);
 
         System::InitUI();
         const Gui* gui = System::GetGui();
-        float x0 = float(Width) / 2;
-        float y0 = float(Height) * 0.75;
 
-        float l1 = 200.0f;
-        float thetha1 = glm::radians(45.0f);
+        bool isSimulationRunning = false;
+        bool isSinglePendulum = true;
 
-        float l2 = 200.0f;
-        float thetha2 = glm::radians(30.0f);
+    /*
+    ==============================================================    
+                    DATA CONFIGURATION 
+    ==============================================================    
+    */
+        int segments = 100;
 
-        float x1 = x0 + ( l1 * sinf(thetha1));
-        float y1 = y0 - ( l1 * cosf(thetha1));
+        float scaleX = Width / 16.0; 
+        float scaleY = Height / 9.0;
 
-        float x2 = x1 + ( l2 * sinf(thetha2));
-        float y2 = y1 - ( l2 * cosf(thetha2));
+        //Physics origin
+        float x0 = 0.0f, y0 = 0.0f;
 
-        float radius1 = 25.0f;
-        float radius2 = 25.0f;
-        int segments = 100.0;
+        //Graphics origin
+        float xg = (x0 * scaleX) + (Width/2);
+        float yg = (Height * 0.75) - (y0 * scaleY);
 
+        //Physical object
+        SinglePendulum single(x0, y0, 0.1, 5.0, 45.0, 0.0);
 
-        float line1[] = { 
-                x0, y0, 0.0f,
-                x1, y1, 0.0f 
-        };
+        //Graphicals object
+        Line singleLine(xg, yg, 0.0f, xg + (single.x * scaleX), yg + (single.y * scaleY), 0.0f);
+        Circle singleCircle(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
+        
+        //Physical object
+        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 180.0, 180.0, 0.0, 0.0);
 
-        float line2[] = { 
-                x1, y1, 0.0f,
-                x2, y2, 0.0f 
-        };
+        //Graphicals objects      
+        Line doubleLine1(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
+        Line doubleLine2(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f, xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), 0.0f);
+        Circle circle1(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 25.0f, segments);
+        Circle circle2(xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), 25.0f, segments);
+        
+    /*
+    ==============================================================    
+                OPENGL DATA CONFIGURATION 
+    ==============================================================    
+    */
 
-        VertexArray line1VAO;
-        VertexBuffer line1VBO(line1, 6 * sizeof(float));
-        VertexBufferLayout layout1;
-        layout1.Push<float>(3);  //positions
-        line1VAO.AddBuffer(line1VBO, layout1);
-        line1VAO.UnBind();
+        
+        //Rod for single pendulum
+        Mesh singleLineMesh(singleLine.getVerticesArrayData(), singleLine.getVerticesArraySize());
 
-        VertexArray line2VAO;
-        VertexBuffer line2VBO(line2, 6 * sizeof(float));
-        VertexBufferLayout layout2;
-        layout2.Push<float>(3);  //positions
-        line2VAO.AddBuffer(line2VBO, layout2);
-        line2VAO.UnBind();
-
+        //Rods for double pendulum
+        Mesh doubleLine1Mesh(doubleLine1.getVerticesArrayData(), doubleLine1.getVerticesArraySize());
+        Mesh doubleLine2Mesh(doubleLine2.getVerticesArrayData(), doubleLine2.getVerticesArraySize());
+  
+        //Universal shader for lines
         Shader lineShader(LINE_SHADER);
 
-        Circle circle1(x1, y1, radius1, segments);
-        
-        Circle circle2(x2, y2, radius2, segments);
+        //Circle for single pendulum
+        Mesh singleCircleMesh(singleCircle.getVerticesArrayData(), singleCircle.getVerticesArraySize());
 
+        //Circles for double pendulum
         Mesh circleMesh1(circle1.getVerticesArrayData(), circle1.getVerticesArraySize());
         Mesh circleMesh2(circle2.getVerticesArrayData(), circle2.getVerticesArraySize());
 
+        //Universal shader for circles
         Shader circleShader(CIRCLE_SHADER);
 
-        glm::mat4 modelCircle1;
-        glm::mat4 modelCircle2;
+        //Trail for single pendulum
+        float trailPositions[10000 * 2] = {0.0f}; 
+        VertexArray trailVAO;
+        VertexBuffer trailPositionsVBO(trailPositions, 10000 * 2 * sizeof(float));
+        VertexBufferLayout trailPositionsLayout;
+        trailPositionsLayout.Push<float>(2);
+        trailVAO.AddBuffer(trailPositionsVBO, trailPositionsLayout);
 
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 proj = glm::mat4(1.0f);
-        glm::mat4 mvp;
+        float doubleTrailPostions[10000 * 2] = {0.0f}; 
+        VertexArray doubleTrailPostionsVAO;
+        VertexBuffer doubleTrailPostionsVBO(trailPositions, 10000 * 2 * sizeof(float));
+        VertexBufferLayout doubleTrailPostionsLayout;
+        doubleTrailPostionsLayout.Push<float>(2);
+        doubleTrailPostionsVAO.AddBuffer(doubleTrailPostionsVBO, doubleTrailPostionsLayout);
 
-        while (!window->ShouldWindowClose()){
 
-        /*
-            START MEASURING APP FRAMERATE
-        */
+        float doubleTrailPostions2[10000 * 2] = {0.0f}; 
+        VertexArray doubleTrailPostionsVAO2;
+        VertexBuffer doubleTrailPostionsVBO2(trailPositions, 10000 * 2 * sizeof(float));
+        VertexBufferLayout doubleTrailPostionsLayout2;
+        doubleTrailPostionsLayout2.Push<float>(2);
+        doubleTrailPostionsVAO2.AddBuffer(doubleTrailPostionsVBO2, doubleTrailPostionsLayout2);
+
+        Shader trailShader(TRAIL_SHADER);
+
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,-0.5f));
+        glm::mat4 proj = glm::ortho(0.0f, (float)Width, 0.0f, (float)Height, -1.0f, 1.0f);
+        glm::mat4 mvp = proj * view * glm::mat4(1.0f);
+
+        //Set uniforms for lines once
+        lineShader.Bind();
+        lineShader.SetUniformMat4f("u_mvp",mvp);
+
+        trailShader.Bind();
+        trailShader.SetUniformMat4f("u_mvp",mvp);
+        trailShader.SetUniform4f("u_color", 1.0f, 0.784f, 0.341f, 1.0f);
+
+        circleShader.Bind();
+        circleShader.SetUniformMat4f("u_mvp",mvp);
+        circleShader.UnBind();
+        
+
+    /*
+    ==============================================================    
+                        MAIN LOOP
+    ==============================================================    
+    */
+
+    while (!window->ShouldWindowClose()){
+        
         FPSTimer::GetTimer()->StartFrame();
+
 
 
         //Event handler - in the future
         window->onEvents();
 
+        /*
+            ==============================================================    
+                        PHYSICS CALCULATION 
+            ==============================================================    
+        */
+
+        if(isSimulationRunning == true){
+
+            if(isSinglePendulum == true){
+                SimulatePendulumEuler(single);
+
+                /*
+                ==============================================================    
+                                GRAPHICS ADJUSTMENTS
+                ==============================================================    
+                */
+                singleLine.setPositions( xg, yg, 0.0f, xg + (single.x * scaleX), yg + (single.y * scaleY), 0.0f);
+                singleLineMesh.UpdateData(singleLine.getVerticesArrayData(), singleLine.getVerticesArraySize());
+
+                singleCircle.generatePoints(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
+                singleCircleMesh.UpdateData(singleCircle.getVerticesArrayData(), singleCircle.getVerticesArraySize());
+
+
+                updateTrailData(xg + (single.x * scaleX), yg + (single.y * scaleY), trailPositions, 10000);
+                trailPositionsVBO.UpdateData(trailPositions, 10000 * 2 * sizeof(float));
+            }
+
+            else{
+                
+                SimulatePendulumEuler(pendulum);
+
+                /*
+                ==============================================================    
+                                GRAPHICS ADJUSTMENTS
+                ==============================================================    
+                */
+
+
+                doubleLine1.setPositions(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
+                doubleLine1Mesh.UpdateData(doubleLine1.getVerticesArrayData(), doubleLine1.getVerticesArraySize());
+
+
+                doubleLine2.setPositions(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f, xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), 0.0f);
+                doubleLine2Mesh.UpdateData(doubleLine2.getVerticesArrayData(), doubleLine2.getVerticesArraySize());
+
+                circle1.generatePoints(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 25.0f, segments);
+                circle2.generatePoints(xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), 25.0f, segments);
+            
+
+                circleMesh1.UpdateData(circle1.getVerticesArrayData(), circle1.getVerticesArraySize());
+                circleMesh2.UpdateData(circle2.getVerticesArrayData(), circle2.getVerticesArraySize());
+
+                updateTrailData(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), doubleTrailPostions, 10000);
+                doubleTrailPostionsVBO.UpdateData(doubleTrailPostions, 10000 * 2 * sizeof(float));
+
+                updateTrailData(xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), doubleTrailPostions2, 10000);
+                doubleTrailPostionsVBO2.UpdateData(doubleTrailPostions2, 10000 * 2 * sizeof(float));
+
+            }
+
+        }
+
+
+        /*
+        ==============================================================    
+                            RENDERING
+        ==============================================================    
+        */
+
         renderer->BeginRender();
 
-       
+        if(isSinglePendulum == true){
 
-            /* Calculations*/
-            thetha1 += glm::radians(0.1f);
-            thetha2 -= glm::radians(0.1f);
-            x1 = x0 + ( l1 * sinf(thetha1));
-            y1 = y0 - ( l1 * cosf(thetha1));
-
-            x2 = x1 + ( l2 * sinf(thetha2));
-            y2 = y1 - ( l2 * cosf(thetha2));
-
-            float lineData[6] = { x0, y0, 0.0f, x1, y1, 0.0f };  
-            float lineData2[6] = { x1, y1, 0.0f, x2, y2, 0.0f };  
-
-            line1VBO.UpdateData(lineData, 6 * sizeof(float));
-            line2VBO.UpdateData(lineData2, 6 * sizeof(float));
-
-            circle1.generatePoints(x1, y1, radius1, segments);
-            circle2.generatePoints(x2, y2, radius2, segments);
-        
-
-            circleMesh1.UpdateData(circle1.getVerticesArrayData(), circle1.getVerticesArraySize());
-            circleMesh2.UpdateData(circle2.getVerticesArrayData(), circle2.getVerticesArraySize());
+            /* RENDER TRAILS*/
+            trailVAO.Bind();
+            trailShader.Bind();
+            glDrawArrays(GL_POINTS, 0, 10000);
 
 
-            /* MODEL MATRIX CIRCLE 1 */
-            modelCircle1 = circle1.getModelMatrix();
-        
-            /* MODEL MATRIX CIRCLE 2 */
-            modelCircle2 = circle2.getModelMatrix();
+            /* RENDER LINE*/
+            renderer->RenderLine(singleLineMesh, lineShader);
+            
 
-            /* VIEW MATRIX */
-            view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,-0.5f));
+            /* RENDER CIRCLE */
+            renderer->RenderCircle(singleCircleMesh,circleShader);
 
-            /* PROJECTION MATRIX */
-            proj = glm::ortho(0.0f, (float)Width, 0.0f, (float)Height, -1.0f, 1.0f);
+        }
+        else{
 
+            /* RENDER TRAILS*/
+            trailShader.Bind();
+            doubleTrailPostionsVAO.Bind();
+            trailShader.SetUniform4f("u_color", 1.0f, 0.784f, 0.341f, 1.0f);
+            glDrawArrays(GL_POINTS, 0, 10000);
+            doubleTrailPostionsVAO2.Bind();
+            trailShader.SetUniform4f("u_color", 1.0f, 0.902f, 0.502f, 1.0f);
+            glDrawArrays(GL_POINTS, 0, 10000);
 
-            circleShader.Bind();
+            /* RENDER LINES */
+            renderer->RenderLine(doubleLine1Mesh, lineShader);
+            renderer->RenderLine(doubleLine2Mesh, lineShader);
 
-            /* RENDER CIRCLE 1*/
-            mvp = proj * view * modelCircle1;
-            circleShader.SetUniformMat4f("u_mvp", mvp);
+            /* RENDER CIRCLES*/
             renderer->RenderCircle(circleMesh1,circleShader);
-
-            /* RENDER LINE 1 */
-            line1VAO.Bind();
-            lineShader.Bind();
-            lineShader.SetUniformMat4f("u_mvp",mvp);
-            glLineWidth(2.5f);
-            glDrawArrays(GL_LINES, 0, 2);
-
-            /* RENDER CIRCLE 2*/
-
-            mvp = proj * view * modelCircle2;
-            circleShader.SetUniformMat4f("u_mvp", mvp);
             renderer->RenderCircle(circleMesh2,circleShader);
 
-            /* RENDER LINE 2 */
-
-            line2VAO.Bind();
-            lineShader.Bind();
-            lineShader.SetUniformMat4f("u_mvp",mvp);
-            glLineWidth(2.5f);
-            glDrawArrays(GL_LINES, 0, 2);
-
-       
-        //Customizing gui...
-        gui->OnBegin();
+        }
 
 
-        
-
-            ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
-            ImGui::Begin("Debug");
-
-                    ImGui::Text("Window control");
-                    ImGui::Text("Resolution: %d x %d",Width, Height);
-                    ImGui::Separator();
-
-                    ImGui::PushID(0);
-                    ImGui::Text("Double pendulum parameters");
-                    ImGui::SliderFloat("Length 1", &l1, 0.0f , 300.0f);
-                    ImGui::SliderFloat("Length 2", &l2, 0.0f , 300.0f);
-                    ImGui::SliderFloat("Thetha 1 (radians)", &thetha1, 0.0f , 2 * M_PI);
-                    ImGui::SliderFloat("Thetha 2 (radians)", &thetha2, 0.0f , 2 * M_PI);
-                   
-
-                    ImGui::PopID();
+        /*
+        ==============================================================    
+                            USER UI 
+        ==============================================================    
+        */
             
+        gui->OnBegin();
+            ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
+            ImGui::Begin("Panel");
+
+            if (ImGui::Button("Single Pendulum")){ isSinglePendulum = true; }
+            ImGui::SameLine();
+            if (ImGui::Button("Double Pendulum")){ isSinglePendulum = false; }
+                
+            if(isSinglePendulum == true){
+                ImGui::PushID(0);
+                ImGui::Text("Single pendulum parameters");
+                // ImGui::SliderFloat("Rod length", &single.l, 0.0f , 300.0f);
+                // ImGui::SliderFloat("Thetha (radians)", &single.theta, 0.0f , 2 * M_PI);
+
+                ImGui::Text("Single pendulum data");
+                ImGui::BulletText("Rod length: %f", single.l);
+                ImGui::BulletText("Thetha (radians): %f", single.theta);
+                ImGui::BulletText("Position (x,y): %f, %f", single.x , single.y);
+                ImGui::BulletText("Angular velocity: %f", single.thetadot);
+
+                ImGui::PopID();
+            }
+
+            if(isSinglePendulum == false){
+                ImGui::PushID(0);
+                ImGui::Text("Double pendulum parameters");
+                // ImGui::SliderFloat("Rod 1 length", &pendulum.l1, 0.0f , 300.0f);
+                // ImGui::SliderFloat("Rod 2 length", &pendulum.l2, 0.0f , 300.0f);
+                // ImGui::SliderFloat("Thetha 1 (radians)", &pendulum.theta1, 0.0f , 2 * M_PI);
+                // ImGui::SliderFloat("Thetha 2 (radians)", &pendulum.theta2, 0.0f , 2 * M_PI);
+
+
+                ImGui::Text("Double pendulum data");
+                ImGui::BulletText("Rod length 1: %f", pendulum.l1);
+                ImGui::BulletText("Rod length 2: %f", pendulum.l2);
+                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1);
+                ImGui::BulletText("Thetha 2 (radians): %f", pendulum.theta2);
+                ImGui::BulletText("Position 1 (x,y): %f, %f", pendulum.x1 , pendulum.y1);
+                ImGui::BulletText("Position 2 (x,y): %f, %f", pendulum.x2  , pendulum.y2);
+                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);
+                ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
+
+               
+
+                ImGui::PopID();
+            }
+
+            if (ImGui::Button("Start")){ isSimulationRunning = true; }
+            ImGui::SameLine();
+            if (ImGui::Button("Stop")){ isSimulationRunning = false; }
+            ImGui::SameLine();
+            if (ImGui::Button("Reset")){
+
+                if(isSinglePendulum == true)
+                    ResetPendulum(single);
+                else
+                    ResetPendulum(pendulum);
+            }
+
             ImGui::End();
-
-        
-
-        
         gui->OnEnd();
         
         window->onUpdate();
-
-        /*
-            STOP MEASURING APP FRAMERATE
-        */
-
         FPSTimer::GetTimer()->UpdateFPS();
       
     }

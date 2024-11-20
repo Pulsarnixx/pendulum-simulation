@@ -11,7 +11,7 @@
 #endif
 
 void Renderer::BeginRender() const {
-    glClearColor(0.70f, 0.70f, 0.70f, 1.0f);
+    glClearColor(0.059f, 0.059f, 0.118f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -30,6 +30,17 @@ void Renderer::RenderMesh(Mesh& mesh, Shader& shaderProgram) const{
     shaderProgram.Bind();
 
     glDrawElements(GL_TRIANGLE_STRIP, verticiesNumber, GL_UNSIGNED_INT, 0);
+
+}
+
+void Renderer::RenderLine(Mesh& mesh, Shader& shaderProgram) const{
+
+    GLsizei verticiesNumber = (GLsizei)mesh.GetVerticiesNumber();
+    mesh.Bind();
+    shaderProgram.Bind();
+
+    glLineWidth(2.5f);
+    glDrawArrays(GL_LINES, 0, verticiesNumber);
 
 }
 

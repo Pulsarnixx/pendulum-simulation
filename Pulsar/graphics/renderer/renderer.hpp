@@ -27,6 +27,7 @@ public:
     void BeginRender() const;
     void RenderGrid(Shader& shaderProgram) const;
     void RenderMesh(Mesh& mesh, Shader& shaderProgram) const;
+    void RenderLine(Mesh& mesh, Shader& shaderProgram) const;
     void RenderCircle(Mesh& mesh, Shader& shaderProgram) const;
   
 private:

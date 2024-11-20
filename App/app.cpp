@@ -1,5 +1,6 @@
 #include "simulation2D.hpp"
-#include "simulation3D.hpp"
+#include "numerical_eq.hpp"
+// #include "simulation3D.hpp"
 
 #include <cstdio> //fprintf
 #include <memory>
@@ -18,13 +19,19 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
+    /*
+        TEST FIRST
+    */
+    RunTests();
+
+
     char choise = *argv[1];
     std::unique_ptr<Simulation> sim;
 
     switch (choise)
     {
         case '1': sim = std::make_unique<Simulation2D>();  break;
-        case '2': sim = std::make_unique<Simulation3D>();  break;
+        // case '2': sim = std::make_unique<Simulation3D>();  break;
         
         default: break;
     }

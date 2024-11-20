@@ -5,6 +5,8 @@
 /bin/
 /data/
 /scripts/
+/Articles/
+/tests_results/
 #Files
 *.o
 *.obj
