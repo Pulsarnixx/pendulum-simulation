@@ -94,7 +94,7 @@ void Simulation2D::run(){
         Circle singleCircle(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
         
         //Physical object
-        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 90.0, 90.0, 0.0, 0.0);
+        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 180.0, 180.0, 0.0, 0.0);
 
         //Graphicals objects      
         Line doubleLine1(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
