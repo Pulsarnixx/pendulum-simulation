@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-- NOTE: Third party dependency used by this software --
+- **glfw** (zlib License)
+  - For more information, see the LICENSE: https://raw.githubusercontent.com/glfw/glfw/refs/heads/master/LICENSE.md
+- **gtest** (BSD 3-Clause License)
+  - For more information, see the LICENSE: https://raw.githubusercontent.com/google/googletest/refs/heads/main/LICENSE
+- **spdlog** (MIT License)
+  - For more information, see the LICENSE: https://raw.githubusercontent.com/gabime/spdlog/refs/heads/v1.x/LICENSE
+- **imgui** (MIT License)
+  - For more information, see the LICENSE: https://raw.githubusercontent.com/ocornut/imgui/refs/heads/master/LICENSE.txt
+- **implot** (MIT License)
+  - For more information, see the LICENSE: https://raw.githubusercontent.com/epezent/implot/refs/heads/master/LICENSE

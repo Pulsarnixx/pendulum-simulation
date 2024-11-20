@@ -66,8 +66,14 @@ void Simulation2D::run(){
         System::InitUI();
         const Gui* gui = System::GetGui();
 
+        //Imgui combo 1
+        const char* pendulumTypes[] = { "Single Pendulum", "Double Pendulum"};
+        int pendulumTypesIndex = 0;
+
+        const char* pendulumNumericEq[] = { "Aprox", "Euler", "RK2", "RK4"};
+        int pendulumNumericEqIndex = 0;
+
         bool isSimulationRunning = false;
-        bool isSinglePendulum = true;
 
     /*
     ==============================================================    
@@ -194,8 +200,19 @@ void Simulation2D::run(){
 
         if(isSimulationRunning == true){
 
-            if(isSinglePendulum == true){
-                SimulatePendulumEuler(single);
+
+            //Single Pendulum
+            if(pendulumTypesIndex == 0){
+
+                switch (pendulumNumericEqIndex)
+                {
+                    case 0: printf("Simulation - Approx\n"); SimulatePendulumApprox(single); break;
+                    case 1: printf("Simulation - Euler\n"); SimulatePendulumEuler(single); break;
+                    case 2: printf("Simulation - RK2\n"); SimulatePendulumRK2(single); break;
+                    case 3: printf("Simulation - RK4\n"); SimulatePendulumRK4(single); break;
+                    default: printf("Simulation - None\n"); break;
+                }
+               
 
                 /*
                 ==============================================================    
@@ -213,7 +230,8 @@ void Simulation2D::run(){
                 trailPositionsVBO.UpdateData(trailPositions, 10000 * 2 * sizeof(float));
             }
 
-            else{
+            //Double Pendulum
+            if(pendulumTypesIndex == 1){
                 
                 SimulatePendulumEuler(pendulum);
 
@@ -257,7 +275,8 @@ void Simulation2D::run(){
 
         renderer->BeginRender();
 
-        if(isSinglePendulum == true){
+        //Single Pendulum
+        if(pendulumTypesIndex == 0){
 
             /* RENDER TRAILS*/
             trailVAO.Bind();
@@ -273,7 +292,9 @@ void Simulation2D::run(){
             renderer->RenderCircle(singleCircleMesh,circleShader);
 
         }
-        else{
+        
+        //Double Pendulum
+        if(pendulumTypesIndex == 1){
 
             /* RENDER TRAILS*/
             trailShader.Bind();
@@ -305,17 +326,22 @@ void Simulation2D::run(){
             ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
             ImGui::Begin("Panel");
 
-            if (ImGui::Button("Single Pendulum")){ isSinglePendulum = true; }
-            ImGui::SameLine();
-            if (ImGui::Button("Double Pendulum")){ isSinglePendulum = false; }
-                
-            if(isSinglePendulum == true){
+            if (ImGui::Combo("Choose pendulum", &pendulumTypesIndex, pendulumTypes, IM_ARRAYSIZE(pendulumTypes))) {
+                printf("Selected: %s\n", pendulumTypes[pendulumTypesIndex]);
+            }
+
+            //Single pendulum
+            if(pendulumTypesIndex == 0){
+
+                if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex, pendulumNumericEq, IM_ARRAYSIZE(pendulumNumericEq))) {
+                    printf("Selected: %s\n", pendulumNumericEq[pendulumNumericEqIndex]);
+                }
+
                 ImGui::PushID(0);
-                ImGui::Text("Single pendulum parameters");
                 // ImGui::SliderFloat("Rod length", &single.l, 0.0f , 300.0f);
                 // ImGui::SliderFloat("Thetha (radians)", &single.theta, 0.0f , 2 * M_PI);
 
-                ImGui::Text("Single pendulum data");
+                ImGui::Text("Actual data");
                 ImGui::BulletText("Rod length: %f", single.l);
                 ImGui::BulletText("Thetha (radians): %f", single.theta);
                 ImGui::BulletText("Position (x,y): %f, %f", single.x , single.y);
@@ -324,16 +350,21 @@ void Simulation2D::run(){
                 ImGui::PopID();
             }
 
-            if(isSinglePendulum == false){
+            //Double Pendulum
+            if(pendulumTypesIndex == 1){
                 ImGui::PushID(0);
-                ImGui::Text("Double pendulum parameters");
+
+                ImGui::Text("Change parameters");
+                double minl1 = 0.0;
+                double maxl1 = 5.0;
+                ImGui::SliderScalar("l1", ImGuiDataType_Double, &pendulum.l1, &minl1, &maxl1, "%.2f");
                 // ImGui::SliderFloat("Rod 1 length", &pendulum.l1, 0.0f , 300.0f);
                 // ImGui::SliderFloat("Rod 2 length", &pendulum.l2, 0.0f , 300.0f);
                 // ImGui::SliderFloat("Thetha 1 (radians)", &pendulum.theta1, 0.0f , 2 * M_PI);
                 // ImGui::SliderFloat("Thetha 2 (radians)", &pendulum.theta2, 0.0f , 2 * M_PI);
 
 
-                ImGui::Text("Double pendulum data");
+                ImGui::Text("Actual data");
                 ImGui::BulletText("Rod length 1: %f", pendulum.l1);
                 ImGui::BulletText("Rod length 2: %f", pendulum.l2);
                 ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1);
@@ -354,9 +385,9 @@ void Simulation2D::run(){
             ImGui::SameLine();
             if (ImGui::Button("Reset")){
 
-                if(isSinglePendulum == true)
+                if(pendulumTypesIndex == 0)
                     ResetPendulum(single);
-                else
+                if(pendulumTypesIndex == 1)
                     ResetPendulum(pendulum);
             }
 

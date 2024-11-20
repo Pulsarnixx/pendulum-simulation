@@ -49,8 +49,10 @@ void ResetPendulum(DoublePendulum& pendulum);
 /*
     Single Pendulum
 */
-void SimulatePendulumEuler(SinglePendulum& pendulum);
 void SimulatePendulumApprox(SinglePendulum& pendulum);
+void SimulatePendulumEuler(SinglePendulum& pendulum);
+void SimulatePendulumRK2(SinglePendulum& pendulum);
+void SimulatePendulumRK4(SinglePendulum& pendulum);
 
 /*
     Double pendulum
