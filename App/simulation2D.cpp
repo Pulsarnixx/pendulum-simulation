@@ -70,10 +70,10 @@ void Simulation2D::run(){
         const char* pendulumTypes[] = { "Single Pendulum", "Double Pendulum"};
         int pendulumTypesIndex = 0;
 
-        const char* pendulumNumericEq[] = { "Aprox", "Euler", "RK2", "RK4"};
+        const char* pendulumNumericEq[] = { "Approximation", "Euler Method", "Heun's method (Modified Euler Method)", "Runge-Kutta Method (RK4)"};
         int pendulumNumericEqIndex = 0;
 
-        const char* pendulumNumericEq2[] = { "Euler", "RK2", "RK4"};
+        const char* pendulumNumericEq2[] = { "Euler Method", "Heun's method (Modified Euler Method)", "Runge-Kutta Method (RK4)"};
         int pendulumNumericEqIndex2 = 0;
 
         bool isSimulationRunning = false;
@@ -108,7 +108,7 @@ void Simulation2D::run(){
         Circle singleCircle(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
         
         //Physical object
-        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 180.0, 180.0, 0.0, 0.0);
+        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 90.0, 90.0, 0.0, 0.0);
 
         //Graphicals objects      
         Line doubleLine1(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
@@ -200,11 +200,6 @@ void Simulation2D::run(){
         //Event handler - in the future
         window->onEvents();
 
-        /*
-            ==============================================================    
-                        PHYSICS CALCULATION 
-            ==============================================================    
-        */
 
         if(isSimulationRunning == true){
 
@@ -212,12 +207,18 @@ void Simulation2D::run(){
             //Single Pendulum
             if(pendulumTypesIndex == 0){
 
+                /*
+                ==============================================================    
+                                    PHYSICS CALCULATION 
+                ==============================================================    
+                */
+
                 switch (pendulumNumericEqIndex)
                 {
                     case 0: printf("Simulation - Approx\n"); SimulatePendulumApprox(single); break;
-                    case 1: printf("Simulation - Euler\n"); SimulatePendulumEuler(single); break;
-                    case 2: printf("Simulation - RK2\n"); SimulatePendulumRK2(single); break;
-                    case 3: printf("Simulation - RK4\n"); SimulatePendulumRK4(single); break;
+                    case 1: printf("Simulation - Euler Method\n"); SimulatePendulumEuler(single); break;
+                    case 2: printf("Simulation - Heun's method (Modified Euler Method)\n"); SimulatePendulumHeun(single); break;
+                    case 3: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(single); break;
                     default: printf("Simulation - None\n"); break;
                 }
                
@@ -241,11 +242,17 @@ void Simulation2D::run(){
             //Double Pendulum
             if(pendulumTypesIndex == 1){
 
+                /*
+                ==============================================================    
+                                    PHYSICS CALCULATION 
+                ==============================================================    
+                */
+
                 switch (pendulumNumericEqIndex2)
                 {
-                    case 0: printf("Simulation - Euler\n");  SimulatePendulumEuler(pendulum);; break;
-                    case 1: printf("Simulation - RK2\n"); /*TODO*/ break;
-                    case 2: printf("Simulation - RK4\n"); /*TODO*/  break;
+                    case 0: printf("Simulation - Euler Method\n");  SimulatePendulumEuler(pendulum);; break;
+                    case 1: printf("Simulation - Heun's method (Modified Euler Method)\n"); SimulatePendulumHeun(pendulum); break;
+                    case 2: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(pendulum); break;
                     default: printf("Simulation - None\n"); break;
                 }
                 
@@ -297,6 +304,7 @@ void Simulation2D::run(){
             /* RENDER TRAILS*/
             trailVAO.Bind();
             trailShader.Bind();
+            glPointSize(2.5f);
             glDrawArrays(GL_POINTS, 0, 10000);
 
 
@@ -316,6 +324,7 @@ void Simulation2D::run(){
             trailShader.Bind();
             doubleTrailPostionsVAO.Bind();
             trailShader.SetUniform4f("u_color", 1.0f, 0.784f, 0.341f, 1.0f);
+            glPointSize(2.5f);
             glDrawArrays(GL_POINTS, 0, 10000);
             doubleTrailPostionsVAO2.Bind();
             trailShader.SetUniform4f("u_color", 1.0f, 0.902f, 0.502f, 1.0f);
@@ -378,7 +387,7 @@ void Simulation2D::run(){
                 if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex2, pendulumNumericEq2, IM_ARRAYSIZE(pendulumNumericEq2))) {
                     printf("Selected: %s\n", pendulumNumericEq2[pendulumNumericEqIndex2]);
                 }
-                
+
                 ImGui::PushID(0);
 
                 // ImGui::Text("Change parameters");

@@ -70,7 +70,7 @@ void SimulatePendulumEuler(SinglePendulum& pendulum){
     pendulum.y = pendulum.y0 - ( pendulum.l * cos(pendulum.theta));
 }
 
-void SimulatePendulumRK2(SinglePendulum& pendulum){
+void SimulatePendulumHeun(SinglePendulum& pendulum){
 
     //Calcualte k1,k2 parameters for theta and thetadot
     double k1_theta = dt * pendulum.thetadot;
@@ -114,19 +114,46 @@ void SimulatePendulumRK4(SinglePendulum& pendulum){
 
 }
 
+/*
+    Helpfull functions for double pendulum calculation
+*/
+
+double calculateThetaddot2(double l1, double l2, double m1, double m2, double theta1, double theta2, double thetadot1, double thetadot2){
+
+    //helpful expressions 
+    double a = ( -1 * (m1 + m2) * g * sin(theta1) ) -( m2 * l2 * thetadot2 * thetadot2 * sin(theta1 - theta2) );
+    double c = m2 * l2 * cos(theta1 - theta2);
+    double d = -1 * g * sin(theta2) + pow(thetadot1,2) * l1 * sin(theta1 - theta2);
+    double e = l1 * cos(theta1 - theta2);
+    double f = l2;
+
+
+    double thetaddot2 = (d - (e * a)) / (f - (e*c));
+    return thetaddot2;
+
+}
+
+double calculateThetaddot1(double l1, double l2, double m1, double m2, double theta1, double theta2, double thetadot2, double thetaddot2){
+
+    //helpful expressions 
+    double a = ( -1 * (m1 + m2) * g * sin(theta1) ) -( m2 * l2 * thetadot2 * thetadot2 * sin(theta1 - theta2) );
+    double b = (m1 + m2) * l1;
+    double c = m2 * l2 * cos(theta1 - theta2);
+
+    
+    double thetaddot1 = (a - (c * thetaddot2)) / b;
+    return thetaddot1;
+
+}
+
 void SimulatePendulumEuler(DoublePendulum& pendulum){
 
-    //Calculation helpful expressions 
-    double a = ( -1 * (pendulum.m1 + pendulum.m2) * g * sin(pendulum.theta1) ) -( pendulum.m2 * pendulum.l2 * pendulum.thetadot2 * pendulum.thetadot2 * sin(pendulum.theta1 - pendulum.theta2) );
-    double b = (pendulum.m1 + pendulum.m2) * pendulum.l1;
-    double c = pendulum.m2 * pendulum.l2 * cos(pendulum.theta1 - pendulum.theta2);
-    double d = -1 * g * sin(pendulum.theta2) + pow(pendulum.thetadot1,2) * pendulum.l1 * sin(pendulum.theta1 - pendulum.theta2);
-    double e = pendulum.l1 * cos(pendulum.theta1 - pendulum.theta2);
-    double f = pendulum.l2;
-
     //Calculate properties in polar coordinates for both masses
-    double thetaddot2 = (d - (e * a)) / (f - (e*c));
-    double thetaddot1 = (a - (c * thetaddot2)) / b;
+    double thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                            pendulum.thetadot1, pendulum.thetadot2);
+
+    double thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                                            pendulum.thetadot2, thetaddot2);                        
 
     pendulum.thetadot2 = pendulum.thetadot2 + dt * thetaddot2;
     pendulum.theta2 = pendulum.theta2 + dt * pendulum.thetadot2;
@@ -140,4 +167,129 @@ void SimulatePendulumEuler(DoublePendulum& pendulum){
 
     pendulum.x2 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)) + ( pendulum.l2 * sin(pendulum.theta2));
     pendulum.y2 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1)) - ( pendulum.l2 * cos(pendulum.theta2));
+}
+
+/*
+    Posible to not create another double variables
+*/
+void SimulatePendulumHeun(DoublePendulum& pendulum){
+
+    //Calculate thetaddots for k1
+    double thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                            pendulum.thetadot1, pendulum.thetadot2);
+
+    double thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                                            pendulum.thetadot2, thetaddot2);   
+
+
+    //Calculate k1s
+    double k1_theta2 = dt * pendulum.thetadot2;
+    double k1_thetadot2 = dt * thetaddot2;
+    double k1_theta1 = dt * pendulum.thetadot1;
+    double k1_thetadot1 = dt * thetaddot1;
+
+    //Calculate thetaddots for k2
+    double thetaddot2_k2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                            pendulum.theta1 + 0.5 * k1_theta1, pendulum.theta2 + 0.5 * k1_theta2,
+                            pendulum.thetadot1 + 0.5 * k1_thetadot1, pendulum.thetadot2  + 0.5 * k1_thetadot2);
+
+    double thetaddot1_k2 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                                               pendulum.theta1 + 0.5 * k1_theta1, pendulum.theta2 + 0.5 * k1_theta2,
+                                               pendulum.thetadot2  + 0.5 * k1_thetadot2, thetaddot2_k2);  
+
+    //Calculate k2s
+    double k2_theta2 = dt * (pendulum.thetadot2 + 0.5 * k1_thetadot2);
+    double k2_thetadot2 = dt * thetaddot2_k2;
+    double k2_theta1 = dt * (pendulum.thetadot1 + 0.5 * k1_thetadot1);
+    double k2_thetadot1 = dt * thetaddot1_k2;
+
+
+    //Update properties based on RK2                                        
+    pendulum.thetadot2 = pendulum.thetadot2 + k2_thetadot2;
+    pendulum.theta2 = pendulum.theta2 + k2_theta2;
+
+    pendulum.thetadot1 = pendulum.thetadot1 + k2_thetadot1;
+    pendulum.theta1 = pendulum.theta1 + k2_theta1;
+
+    //Update cartesian coordinates based on polar coordinates values for both masses
+    pendulum.x1 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)); 
+    pendulum.y1 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1));
+
+    pendulum.x2 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)) + ( pendulum.l2 * sin(pendulum.theta2));
+    pendulum.y2 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1)) - ( pendulum.l2 * cos(pendulum.theta2));
+}
+
+void SimulatePendulumRK4(DoublePendulum& pendulum){
+
+    //Calculate thetaddots for k1
+    double thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                            pendulum.thetadot1, pendulum.thetadot2);
+
+    double thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2, pendulum.theta1, pendulum.theta2,
+                                            pendulum.thetadot2, thetaddot2);   
+
+
+    //Calculate k1s
+    double k1_theta2 = dt * pendulum.thetadot2;
+    double k1_thetadot2 = dt * thetaddot2;
+    double k1_theta1 = dt * pendulum.thetadot1;
+    double k1_thetadot1 = dt * thetaddot1;
+
+    //Calculate thetaddots for k2
+    thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                            pendulum.theta1 + 0.5 * k1_theta1, pendulum.theta2 + 0.5 * k1_theta2,
+                            pendulum.thetadot1 + 0.5 * k1_thetadot1, pendulum.thetadot2  + 0.5 * k1_thetadot2);
+
+    thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                                               pendulum.theta1 + 0.5 * k1_theta1, pendulum.theta2 + 0.5 * k1_theta2,
+                                               pendulum.thetadot2  + 0.5 * k1_thetadot2, thetaddot2);  
+
+    //Calculate k2s
+    double k2_theta2 = dt * (pendulum.thetadot2 + 0.5 * k1_thetadot2);
+    double k2_thetadot2 = dt * thetaddot2;
+    double k2_theta1 = dt * (pendulum.thetadot1 + 0.5 * k1_thetadot1);
+    double k2_thetadot1 = dt * thetaddot1;
+
+    //Calculate thetaddots for k3
+    thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                            pendulum.theta1 + 0.5 * k2_theta1, pendulum.theta2 + 0.5 * k2_theta2,
+                            pendulum.thetadot1 + 0.5 * k2_thetadot1, pendulum.thetadot2  + 0.5 * k2_thetadot2);
+
+    thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                                               pendulum.theta1 + 0.5 * k2_theta1, pendulum.theta2 + 0.5 * k2_theta2,
+                                               pendulum.thetadot2  + 0.5 * k2_thetadot2, thetaddot2); 
+
+    double k3_theta2 = dt * (pendulum.thetadot2 + 0.5 * k2_thetadot2);
+    double k3_thetadot2 = dt * thetaddot2;
+    double k3_theta1 = dt * (pendulum.thetadot1 + 0.5 * k2_thetadot1);
+    double k3_thetadot1 = dt * thetaddot1;
+
+    //Calculate thetaddots for k4
+    thetaddot2 = calculateThetaddot2(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                            pendulum.theta1 + k3_theta1, pendulum.theta2 + k3_theta2,
+                            pendulum.thetadot1 + k3_thetadot1, pendulum.thetadot2  + k3_thetadot2);
+
+    thetaddot1 = calculateThetaddot1(pendulum.l1, pendulum.l2, pendulum.m1, pendulum.m2,
+                                               pendulum.theta1 + k3_theta1, pendulum.theta2 + k3_theta2,
+                                               pendulum.thetadot2  + k3_thetadot2, thetaddot2); 
+
+    double k4_theta2 = dt * (pendulum.thetadot2 + k3_thetadot2);
+    double k4_thetadot2 = dt * thetaddot2;
+    double k4_theta1 = dt * (pendulum.thetadot1 + k3_thetadot1);
+    double k4_thetadot1 = dt * thetaddot1;
+
+    //Update properties based on RK4                                     
+    pendulum.thetadot2 = pendulum.thetadot2 + ((k1_thetadot2 + 2 * k2_thetadot2 + 2 * k3_thetadot2 + k4_thetadot2) / 6);
+    pendulum.theta2 = pendulum.theta2 + ((k1_theta2 + 2 * k2_theta2 + 2 * k3_theta2 + k4_theta2) / 6);
+
+    pendulum.thetadot1 = pendulum.thetadot1 + ((k1_thetadot1 + 2 * k2_thetadot1 + 2 * k3_thetadot1 + k4_thetadot1) / 6);
+    pendulum.theta1 = pendulum.theta1 + ((k1_theta1 + 2 * k2_theta1 + 2 * k3_theta1 + k4_theta1) / 6);
+
+    //Update cartesian coordinates based on polar coordinates values for both masses
+    pendulum.x1 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)); 
+    pendulum.y1 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1));
+
+    pendulum.x2 = pendulum.x0 + ( pendulum.l1 * sin(pendulum.theta1)) + ( pendulum.l2 * sin(pendulum.theta2));
+    pendulum.y2 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1)) - ( pendulum.l2 * cos(pendulum.theta2));
+
 }
