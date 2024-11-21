@@ -21,11 +21,6 @@ static void FrameBufferCallBack(GLFWwindow* window, int width, int height){
 
 }
 
-//Starting point
-static double x_0 = double(Width) / 2;
-static double y_0 = double(Height) * 0.75;
-
-
 void updateTrailData(float x, float y, float* trailPosition, int trailElements){
     
     for (int i = 0; i < trailElements - 1; ++i) {
@@ -35,6 +30,16 @@ void updateTrailData(float x, float y, float* trailPosition, int trailElements){
 
     trailPosition[0] = x;
     trailPosition[1] = y;
+}
+
+void updatePlotData(double newData, double* dataArray, size_t dataSize){
+
+    for (size_t i = 0; i < dataSize - 1; ++i) {
+        dataArray[i] = dataArray[i+1];
+    }
+
+    dataArray[dataSize - 1] = newData;
+
 }
 
 
@@ -66,7 +71,7 @@ void Simulation2D::run(){
         System::InitUI();
         const Gui* gui = System::GetGui();
 
-        //Imgui combo 1
+        //ImGui parameters for UI
         const char* pendulumTypes[] = { "Single Pendulum", "Double Pendulum"};
         int pendulumTypesIndex = 0;
 
@@ -79,10 +84,17 @@ void Simulation2D::run(){
         bool isSimulationRunning = false;
 
 
-        int   bar_data[11] = {0};
-        float x_data[1000] = {2};
-        float y_data[1000] = {2};
-
+        //ImPlot parameters for plots
+        double t_data[1000] = {0.0};
+        //Single Pendulum data
+        double theta_data[1000] = {0.0};
+        double thetadot_data[1000] = {0.0};
+        //Double Pendulum data
+        double t2_data[1000] = {0.0};
+        double theta1_data[1000] = {0.0};
+        double thetadot1_data[1000] = {0.0};
+        double theta2_data[1000] = {0.0};
+        double thetadot2_data[1000] = {0.0};
     /*
     ==============================================================    
                     DATA CONFIGURATION 
@@ -190,6 +202,7 @@ void Simulation2D::run(){
                         MAIN LOOP
     ==============================================================    
     */
+    double dt = 0.016;
 
     while (!window->ShouldWindowClose()){
         
@@ -221,6 +234,11 @@ void Simulation2D::run(){
                     case 3: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(single); break;
                     default: printf("Simulation - None\n"); break;
                 }
+
+                                
+                updatePlotData(t_data[999] + dt, t_data, 1000);
+                updatePlotData(single.theta, theta_data, 1000);
+                updatePlotData(single.thetadot, thetadot_data, 1000);
                
 
                 /*
@@ -255,7 +273,13 @@ void Simulation2D::run(){
                     case 2: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(pendulum); break;
                     default: printf("Simulation - None\n"); break;
                 }
-                
+
+                updatePlotData(t2_data[999] + dt, t2_data, 1000);
+                updatePlotData(pendulum.theta1, theta1_data, 1000);
+                updatePlotData(pendulum.thetadot1, thetadot1_data, 1000);
+                updatePlotData(pendulum.theta2, theta2_data, 1000);
+                updatePlotData(pendulum.thetadot2, thetadot2_data, 1000);
+
               
 
                 /*
@@ -374,8 +398,9 @@ void Simulation2D::run(){
 
                 ImGui::PopID();
                 
-                if (ImPlot::BeginPlot("My Plot")) {
-                    ImPlot::PlotLine("My Line Plot", x_data, y_data, 1000);
+                if (ImPlot::BeginPlot("Single pendulum plot")) {
+                    ImPlot::PlotLine("Theta", t_data, theta_data, 1000);
+                    ImPlot::PlotLine("ThetaDot", t_data, thetadot_data, 1000);
                     ImPlot::EndPlot();
                 }
 
@@ -409,6 +434,15 @@ void Simulation2D::run(){
                 ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
 
                 ImGui::PopID();
+
+                 
+                if (ImPlot::BeginPlot("Double pendulum plot")) {
+                    ImPlot::PlotLine("Theta 1", t2_data, theta1_data, 1000);
+                    ImPlot::PlotLine("ThetaDot 1 ", t2_data, thetadot1_data, 1000);
+                    ImPlot::PlotLine("Theta 2", t2_data, theta2_data, 1000);
+                    ImPlot::PlotLine("ThetaDot 2 ", t2_data, thetadot2_data, 1000);
+                    ImPlot::EndPlot();
+                }
             }
 
             if (ImGui::Button("Start")){ isSimulationRunning = true; }
