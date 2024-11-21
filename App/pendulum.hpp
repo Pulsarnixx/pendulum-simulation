@@ -38,6 +38,10 @@ struct DoublePendulum{
     DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,
                     double init_theta2,double init_thetadot1, double init_thetadot2);
 
+    double getPotencialEnergy();
+    double getKinematicEnergy();
+    double getEnergy();
+
     void displayParameters();
 
 

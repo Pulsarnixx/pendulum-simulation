@@ -83,6 +83,9 @@ void Simulation2D::run(){
 
         bool isSimulationRunning = false;
 
+    /*
+        TODO - OPTIMIZE THIS!!!!!!!!!!!!
+    */
 
         //ImPlot parameters for plots
         double t_data[1000] = {0.0};
@@ -95,6 +98,9 @@ void Simulation2D::run(){
         double thetadot1_data[1000] = {0.0};
         double theta2_data[1000] = {0.0};
         double thetadot2_data[1000] = {0.0};
+        double Ep_data[1000] = {0.0};
+        double Ek_data[1000] = {0.0};
+        double Ec_data[1000] = {0.0};
     /*
     ==============================================================    
                     DATA CONFIGURATION 
@@ -280,6 +286,13 @@ void Simulation2D::run(){
                 updatePlotData(pendulum.theta2, theta2_data, 1000);
                 updatePlotData(pendulum.thetadot2, thetadot2_data, 1000);
 
+                double pot = pendulum.getPotencialEnergy();
+                double kin = pendulum.getKinematicEnergy();
+                
+                updatePlotData(pot, Ep_data, 1000);
+                updatePlotData(kin, Ek_data, 1000);
+                updatePlotData(kin + pot, Ec_data, 1000);
+
               
 
                 /*
@@ -398,9 +411,16 @@ void Simulation2D::run(){
 
                 ImGui::PopID();
                 
-                if (ImPlot::BeginPlot("Single pendulum plot")) {
+                if (ImPlot::BeginPlot("Position and velocity")) {
                     ImPlot::PlotLine("Theta", t_data, theta_data, 1000);
                     ImPlot::PlotLine("ThetaDot", t_data, thetadot_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
+                if (ImPlot::BeginPlot("Energy")) {
+                    // ImPlot::PlotLine("Ep", t_data, theta1_data, 1000);
+                    // ImPlot::PlotLine("Ek ", t_data, thetadot1_data, 1000);
+                    // ImPlot::PlotLine("Ec ", t_data, thetadot1_data, 1000);
                     ImPlot::EndPlot();
                 }
 
@@ -436,11 +456,18 @@ void Simulation2D::run(){
                 ImGui::PopID();
 
                  
-                if (ImPlot::BeginPlot("Double pendulum plot")) {
+                if (ImPlot::BeginPlot("Positions and velocities")) {
                     ImPlot::PlotLine("Theta 1", t2_data, theta1_data, 1000);
-                    ImPlot::PlotLine("ThetaDot 1 ", t2_data, thetadot1_data, 1000);
                     ImPlot::PlotLine("Theta 2", t2_data, theta2_data, 1000);
+                    ImPlot::PlotLine("ThetaDot 1 ", t2_data, thetadot1_data, 1000);
                     ImPlot::PlotLine("ThetaDot 2 ", t2_data, thetadot2_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
+                if (ImPlot::BeginPlot("Energy")) {
+                    ImPlot::PlotLine("Ep", t2_data, Ep_data, 1000);
+                    ImPlot::PlotLine("Ek ", t2_data, Ek_data, 1000);
+                    ImPlot::PlotLine("Ec ", t2_data, Ec_data, 1000);
                     ImPlot::EndPlot();
                 }
             }

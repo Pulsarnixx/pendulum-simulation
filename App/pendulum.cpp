@@ -35,6 +35,19 @@ DoublePendulum::DoublePendulum( float x0, float y0, double m1, double m2, double
 
 }
 
+
+double DoublePendulum::getKinematicEnergy(){
+    return ( ( 0.5 * m1 * l1 * l1 * thetadot1 * thetadot1 ) + 
+             ( 0.5 * m2 * ( (l1 * l1 * thetadot1 * thetadot1) + (l2 * l2 * thetadot2 * thetadot2) + (2 * l1 * l2 * thetadot1 * thetadot2 * cos(theta1 - theta2)) ) )
+            );
+}
+
+double DoublePendulum::getPotencialEnergy(){
+    return (   (-1.0 * m1 * g * l1 * cos(theta1)) - ( m1 * g * ( (l1 * cos(theta1)) + (l2 * cos(theta2)) ) )
+             
+             );
+}
+
 void DoublePendulum::displayParameters(){
 
     std::cout << "Double Pendulum parameters: \n";
