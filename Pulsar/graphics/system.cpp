@@ -120,9 +120,14 @@ void System::InitUI(){
     // // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    float scale = 1.25f;
+    io.FontGlobalScale = scale; 
+    ImGui::GetStyle().ScaleAllSizes(scale);
 
 
     // Setup Platform/Renderer backends
@@ -153,6 +158,7 @@ void System::ShutDown(){
     if(m_isIMGUIInitialized == true){
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
+        ImPlot::DestroyContext();
         ImGui::DestroyContext();
         PX_CORE_INFO("IMGUI terminating success!");
     }

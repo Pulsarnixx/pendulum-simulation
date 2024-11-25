@@ -4,11 +4,6 @@
 #include "Pulsar.hpp"
 #include "iostream"
 
-//Shader code paths
-#define CIRCLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/circle.shader"
-#define LINE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/line.shader"
-#define TRAIL_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/trail.shader"
-
 //Window resolution
 static unsigned int Width = 1600;
 static unsigned int Height = 900;
@@ -21,11 +16,6 @@ static void FrameBufferCallBack(GLFWwindow* window, int width, int height){
 
 }
 
-//Starting point
-static double x_0 = double(Width) / 2;
-static double y_0 = double(Height) * 0.75;
-
-
 void updateTrailData(float x, float y, float* trailPosition, int trailElements){
     
     for (int i = 0; i < trailElements - 1; ++i) {
@@ -37,6 +27,15 @@ void updateTrailData(float x, float y, float* trailPosition, int trailElements){
     trailPosition[1] = y;
 }
 
+void updatePlotData(double newData, double* dataArray, size_t dataSize){
+
+    for (size_t i = 0; i < dataSize - 1; ++i) {
+        dataArray[i] = dataArray[i+1];
+    }
+
+    dataArray[dataSize - 1] = newData;
+
+}
 
 void Simulation2D::initialize(){
 
@@ -66,8 +65,45 @@ void Simulation2D::run(){
         System::InitUI();
         const Gui* gui = System::GetGui();
 
+        //ImGui parameters for UI
+        const char* pendulumTypes[] = { "Single Pendulum", "Double Pendulum"};
+        int pendulumTypesIndex = 0;
+
+        const char* pendulumNumericEq[] = { "Approximation", "Euler Method", "Heun's method (Modified Euler Method)", "Runge-Kutta Method (RK4)"};
+        int pendulumNumericEqIndex = 0;
+
+        const char* pendulumNumericEq2[] = { "Euler Method", "Heun's method (Modified Euler Method)", "Runge-Kutta Method (RK4)"};
+        int pendulumNumericEqIndex2 = 0;
+
         bool isSimulationRunning = false;
-        bool isSinglePendulum = true;
+        
+    /*
+        TODO - OPTIMIZE THIS!!!!!!!!!!!!
+    */
+
+        //ImPlot parameters for plots
+
+        //Single Pendulum data
+        double t_data[1000] = {0.0};
+
+        double theta_data[1000] = {0.0};
+        double thetadot_data[1000] = {0.0};
+        
+        double Ep_data[1000] = {0.0};
+        double Ek_data[1000] = {0.0};
+        double Ec_data[1000] = {0.0};
+        
+        //Double Pendulum data
+        double t2_data[1000] = {0.0};
+
+        double theta1_data[1000] = {0.0};
+        double thetadot1_data[1000] = {0.0};
+        double theta2_data[1000] = {0.0};
+        double thetadot2_data[1000] = {0.0};
+
+        double Ep2_data[1000] = {0.0};
+        double Ek2_data[1000] = {0.0};
+        double Ec2_data[1000] = {0.0};
 
     /*
     ==============================================================    
@@ -94,7 +130,7 @@ void Simulation2D::run(){
         Circle singleCircle(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
         
         //Physical object
-        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 180.0, 180.0, 0.0, 0.0);
+        DoublePendulum pendulum(x0, y0, 0.1, 0.2, 3.0, 3.0, 90.0, 90.0, 0.0, 0.0);
 
         //Graphicals objects      
         Line doubleLine1(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
@@ -176,6 +212,7 @@ void Simulation2D::run(){
                         MAIN LOOP
     ==============================================================    
     */
+    double dt = 0.016;
 
     while (!window->ShouldWindowClose()){
         
@@ -186,16 +223,40 @@ void Simulation2D::run(){
         //Event handler - in the future
         window->onEvents();
 
-        /*
-            ==============================================================    
-                        PHYSICS CALCULATION 
-            ==============================================================    
-        */
 
         if(isSimulationRunning == true){
 
-            if(isSinglePendulum == true){
-                SimulatePendulumEuler(single);
+
+            //Single Pendulum
+            if(pendulumTypesIndex == 0){
+
+                /*
+                ==============================================================    
+                                    PHYSICS CALCULATION 
+                ==============================================================    
+                */
+
+                switch (pendulumNumericEqIndex)
+                {
+                    case 0: SimulatePendulumApprox(single); break;
+                    case 1: SimulatePendulumEuler(single); break;
+                    case 2: SimulatePendulumHeun(single); break;
+                    case 3: SimulatePendulumRK4(single); break;
+                    default: break;
+                }
+
+                                
+                updatePlotData(t_data[999] + dt, t_data, 1000);
+                updatePlotData(single.theta, theta_data, 1000);
+                updatePlotData(single.thetadot, thetadot_data, 1000);
+
+                double pot = single.getPotencialEnergy();
+                double kin = single.getKinematicEnergy();
+                
+                updatePlotData(pot, Ep_data, 1000);
+                updatePlotData(kin, Ek_data, 1000);
+                updatePlotData(kin + pot, Ec_data, 1000);
+               
 
                 /*
                 ==============================================================    
@@ -213,9 +274,37 @@ void Simulation2D::run(){
                 trailPositionsVBO.UpdateData(trailPositions, 10000 * 2 * sizeof(float));
             }
 
-            else{
+            //Double Pendulum
+            if(pendulumTypesIndex == 1){
+
+                /*
+                ==============================================================    
+                                    PHYSICS CALCULATION 
+                ==============================================================    
+                */
+
+                switch (pendulumNumericEqIndex2)
+                {
+                    case 0: SimulatePendulumEuler(pendulum);; break;
+                    case 1: SimulatePendulumHeun(pendulum); break;
+                    case 2: SimulatePendulumRK4(pendulum); break;
+                    default: break;
+                }
+
+                updatePlotData(t2_data[999] + dt, t2_data, 1000);
+                updatePlotData(pendulum.theta1, theta1_data, 1000);
+                updatePlotData(pendulum.thetadot1, thetadot1_data, 1000);
+                updatePlotData(pendulum.theta2, theta2_data, 1000);
+                updatePlotData(pendulum.thetadot2, thetadot2_data, 1000);
+
+                double pot = pendulum.getPotencialEnergy();
+                double kin = pendulum.getKinematicEnergy();
                 
-                SimulatePendulumEuler(pendulum);
+                updatePlotData(pot, Ep2_data, 1000);
+                updatePlotData(kin, Ek2_data, 1000);
+                updatePlotData(kin + pot, Ec2_data, 1000);
+
+              
 
                 /*
                 ==============================================================    
@@ -257,11 +346,13 @@ void Simulation2D::run(){
 
         renderer->BeginRender();
 
-        if(isSinglePendulum == true){
+        //Single Pendulum
+        if(pendulumTypesIndex == 0){
 
             /* RENDER TRAILS*/
             trailVAO.Bind();
             trailShader.Bind();
+            glPointSize(2.5f);
             glDrawArrays(GL_POINTS, 0, 10000);
 
 
@@ -273,12 +364,15 @@ void Simulation2D::run(){
             renderer->RenderCircle(singleCircleMesh,circleShader);
 
         }
-        else{
+        
+        //Double Pendulum
+        if(pendulumTypesIndex == 1){
 
             /* RENDER TRAILS*/
             trailShader.Bind();
             doubleTrailPostionsVAO.Bind();
             trailShader.SetUniform4f("u_color", 1.0f, 0.784f, 0.341f, 1.0f);
+            glPointSize(2.5f);
             glDrawArrays(GL_POINTS, 0, 10000);
             doubleTrailPostionsVAO2.Bind();
             trailShader.SetUniform4f("u_color", 1.0f, 0.902f, 0.502f, 1.0f);
@@ -305,60 +399,106 @@ void Simulation2D::run(){
             ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
             ImGui::Begin("Panel");
 
-            if (ImGui::Button("Single Pendulum")){ isSinglePendulum = true; }
-            ImGui::SameLine();
-            if (ImGui::Button("Double Pendulum")){ isSinglePendulum = false; }
-                
-            if(isSinglePendulum == true){
-                ImGui::PushID(0);
-                ImGui::Text("Single pendulum parameters");
-                // ImGui::SliderFloat("Rod length", &single.l, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Thetha (radians)", &single.theta, 0.0f , 2 * M_PI);
-
-                ImGui::Text("Single pendulum data");
-                ImGui::BulletText("Rod length: %f", single.l);
-                ImGui::BulletText("Thetha (radians): %f", single.theta);
-                ImGui::BulletText("Position (x,y): %f, %f", single.x , single.y);
-                ImGui::BulletText("Angular velocity: %f", single.thetadot);
-
-                ImGui::PopID();
-            }
-
-            if(isSinglePendulum == false){
-                ImGui::PushID(0);
-                ImGui::Text("Double pendulum parameters");
-                // ImGui::SliderFloat("Rod 1 length", &pendulum.l1, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Rod 2 length", &pendulum.l2, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Thetha 1 (radians)", &pendulum.theta1, 0.0f , 2 * M_PI);
-                // ImGui::SliderFloat("Thetha 2 (radians)", &pendulum.theta2, 0.0f , 2 * M_PI);
-
-
-                ImGui::Text("Double pendulum data");
-                ImGui::BulletText("Rod length 1: %f", pendulum.l1);
-                ImGui::BulletText("Rod length 2: %f", pendulum.l2);
-                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1);
-                ImGui::BulletText("Thetha 2 (radians): %f", pendulum.theta2);
-                ImGui::BulletText("Position 1 (x,y): %f, %f", pendulum.x1 , pendulum.y1);
-                ImGui::BulletText("Position 2 (x,y): %f, %f", pendulum.x2  , pendulum.y2);
-                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);
-                ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
-
-               
-
-                ImGui::PopID();
-            }
-
             if (ImGui::Button("Start")){ isSimulationRunning = true; }
             ImGui::SameLine();
             if (ImGui::Button("Stop")){ isSimulationRunning = false; }
             ImGui::SameLine();
             if (ImGui::Button("Reset")){
 
-                if(isSinglePendulum == true)
+                if(pendulumTypesIndex == 0)
                     ResetPendulum(single);
-                else
+                if(pendulumTypesIndex == 1)
                     ResetPendulum(pendulum);
             }
+
+            if (ImGui::Combo("Choose pendulum", &pendulumTypesIndex, pendulumTypes, IM_ARRAYSIZE(pendulumTypes))) {
+                printf("Selected: %s\n", pendulumTypes[pendulumTypesIndex]);
+                
+            }
+
+            //Single pendulum
+            if(pendulumTypesIndex == 0){
+
+                if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex, pendulumNumericEq, IM_ARRAYSIZE(pendulumNumericEq))) {
+                    printf("Selected: %s\n", pendulumNumericEq[pendulumNumericEqIndex]);
+                }
+
+                ImGui::PushID(0);
+
+                ImGui::Text("Change parameters");
+                ImGui::InputDouble("Mass", &single.m, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Rod length", &single.l, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha", &single.theta, 0.01, 3.0, "%.2f");
+       
+
+                ImGui::Text("Actual data");
+                ImGui::BulletText("Mass: %f", single.m);
+                ImGui::BulletText("Rod length: %f", single.l);
+                ImGui::BulletText("Thetha (radians): %f", single.theta);
+                ImGui::BulletText("Angular velocity: %f", single.thetadot);
+
+                ImGui::PopID();
+                
+                if (ImPlot::BeginPlot("Position and velocity")) {
+                    ImPlot::PlotLine("Theta", t_data, theta_data, 1000);
+                    ImPlot::PlotLine("ThetaDot", t_data, thetadot_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
+                if (ImPlot::BeginPlot("Energy")) {
+                    ImPlot::PlotLine("Ep", t_data, Ep_data, 1000);
+                    ImPlot::PlotLine("Ek ", t_data, Ek_data, 1000);
+                    ImPlot::PlotLine("Ec ", t_data, Ec_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
+            }
+
+            //Double Pendulum
+            if(pendulumTypesIndex == 1){
+
+                if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex2, pendulumNumericEq2, IM_ARRAYSIZE(pendulumNumericEq2))) {
+                    printf("Selected: %s\n", pendulumNumericEq2[pendulumNumericEqIndex2]);
+                }
+
+                ImGui::PushID(0);
+
+                ImGui::Text("Change parameters");
+                ImGui::InputDouble("Rod length", &pendulum.l1, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Rod length", &pendulum.l2, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha 1", &pendulum.theta1, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha 2", &pendulum.theta2, 0.01, 3.0, "%.2f");
+
+
+                ImGui::Text("Actual data");
+                ImGui::BulletText("Mass 1: %f", pendulum.m1); ImGui::SameLine();
+                ImGui::BulletText("Mass 2: %f", pendulum.m2);
+                ImGui::BulletText("Rod length 1: %f", pendulum.l1); ImGui::SameLine();
+                ImGui::BulletText("Rod length 2: %f", pendulum.l2);
+                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1); ImGui::SameLine();
+                ImGui::BulletText("Thetha 2 (radians): %f", pendulum.theta2);
+                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);ImGui::SameLine();
+                ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
+
+                ImGui::PopID();
+
+                 
+                if (ImPlot::BeginPlot("Positions and velocities")) {
+                    ImPlot::PlotLine("Theta 1", t2_data, theta1_data, 1000);
+                    ImPlot::PlotLine("Theta 2", t2_data, theta2_data, 1000);
+                    ImPlot::PlotLine("ThetaDot 1 ", t2_data, thetadot1_data, 1000);
+                    ImPlot::PlotLine("ThetaDot 2 ", t2_data, thetadot2_data, 1000);
+                    ImPlot::EndPlot();
+                }
+
+                if (ImPlot::BeginPlot("Energy")) {
+                    ImPlot::PlotLine("Ep", t2_data, Ep2_data, 1000);
+                    ImPlot::PlotLine("Ek ", t2_data, Ek2_data, 1000);
+                    ImPlot::PlotLine("Ec ", t2_data, Ec2_data, 1000);
+                    ImPlot::EndPlot();
+                }
+            }
+
 
             ImGui::End();
         gui->OnEnd();

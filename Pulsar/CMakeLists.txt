@@ -30,6 +30,11 @@ set(IMGUI_BACKENDS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends
 message(STATUS "[IMGUI] include path: ${IMGUI_BACKENDS_INCLUDE_DIR}")
 #------------------------------------------------
 
+#------------IMPLOT--------------------------------
+set(IMPLOT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/implot/)
+message(STATUS "[IMPLOT] include path: ${IMPLOT_INCLUDE_DIR}")
+#------------------------------------------------
+
 #------------GTEST--------------------------------
 set(GTEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/googletest/googletest/include/)
 message(STATUS "[GTEST] include path: ${GTEST_INCLUDE_DIR}")
@@ -94,7 +99,7 @@ target_include_directories( ${PROJECT_NAME} PUBLIC ${SPDLOG_INCLUDE_DIR}
                             ${GLAD_INCLUDE_DIR}    ${GLFW_INCLUDE_DIR} 
                             ${STB_IMAGE} ${GLM_INCLUDE_DIR}
                             ${IMGUI_INCLUDE_DIR} ${IMGUI_BACKENDS_INCLUDE_DIR}    
-                            ${CORE_INCLUDE_PATH} ${GRAPHICS_INCLUDE_PATH}
+                            ${IMPLOT_INCLUDE_DIR} ${CORE_INCLUDE_PATH} ${GRAPHICS_INCLUDE_PATH}
 )
 
 target_link_libraries( ${PROJECT_NAME} PUBLIC

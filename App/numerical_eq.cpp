@@ -4,14 +4,12 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-#include <iomanip>  // Do formatowania wyników (np. zaokrąglanie)
+#include <iomanip>
 
 //Constanst
 static double g = 9.81;
 static double m = 1.0; 
 static double l = 1.0;
-
-#define TEST_FOLDER_PATH "/home/marek/Dev/Projects/pulsarEngine/tests_results/"
 
 
 void RunTests(){

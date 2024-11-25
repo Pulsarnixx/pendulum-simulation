@@ -16,6 +16,9 @@ struct SinglePendulum{
 
     SinglePendulum(float x0, float y0, double m, double l, double init_theta, double init_thetadot);
 
+    double getKinematicEnergy();
+    double getPotencialEnergy();
+
     void displayParameters();
   
 };
@@ -38,6 +41,9 @@ struct DoublePendulum{
     DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,
                     double init_theta2,double init_thetadot1, double init_thetadot2);
 
+    double getPotencialEnergy();
+    double getKinematicEnergy();
+
     void displayParameters();
 
 
@@ -49,10 +55,14 @@ void ResetPendulum(DoublePendulum& pendulum);
 /*
     Single Pendulum
 */
-void SimulatePendulumEuler(SinglePendulum& pendulum);
 void SimulatePendulumApprox(SinglePendulum& pendulum);
+void SimulatePendulumEuler(SinglePendulum& pendulum);
+void SimulatePendulumHeun(SinglePendulum& pendulum);
+void SimulatePendulumRK4(SinglePendulum& pendulum);
 
 /*
     Double pendulum
 */
 void SimulatePendulumEuler(DoublePendulum& pendulum);
+void SimulatePendulumHeun(DoublePendulum& pendulum);
+void SimulatePendulumRK4(DoublePendulum& pendulum);
