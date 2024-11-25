@@ -3,7 +3,11 @@
 #include <fstream> //ifstream
 #include <sstream> //stringstream
 #include "glad.h"  //gl functions
-//#include <glm> in the future
+
+#define DEBUG
+#ifdef DEBUG
+    #include "../../../core/log/log.hpp"
+#endif
 
 //ShaderSource definition
 struct ShaderSource{
@@ -17,9 +21,21 @@ Shader::Shader(const std::string& filepath)
 {
     ShaderSource source = ReadGLSLFromFile(filepath);
     m_ID = GenerateShaderProgram(source.s_vertexSource, source.s_fragmentSource);
+
+    #ifdef DEBUG
+        std::string message = "[SHADER " + std::to_string(m_ID) + "] - constructor";
+        PX_CORE_TRACE(message);
+    #endif
+
 }
 
 Shader::~Shader(){
+
+    #ifdef DEBUG
+        std::string message = "[SHADER " + std::to_string(m_ID) + "] - destructor";
+        PX_CORE_TRACE(message);
+    #endif
+
     glDeleteProgram(m_ID);
 }
 
@@ -38,6 +54,14 @@ void Shader::SetUniform1i(const std::string& name, int v0){
     if(location != -1)
         glUniform1i(location, v0);
 }
+
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2){
+    int location = GetUniformLocation(name);
+
+    if(location != -1)
+        glUniform3f(location, v0, v1, v2);
+}
+
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3 ){
     int location = GetUniformLocation(name);
 
@@ -45,13 +69,13 @@ void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
         glUniform4f(location, v0, v1, v2, v3);
 }
 
-// void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& m1){
-//     int location = GetUniformLocation(name);
+void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& m1){
+    int location = GetUniformLocation(name);
 
-//     if(location != -1)
-//         glUniformMatrix4fv(location,1,false,&m1[0][0]);
+    if(location != -1)
+        glUniformMatrix4fv(location,1,false,&m1[0][0]);
 
-// }
+}
 
 //Private
 

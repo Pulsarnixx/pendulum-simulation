@@ -1,25 +1,40 @@
 #pragma once
 
-//-------CORE----------------------
+
+
+//-------CORE-------------------------------
 #include "log/log.hpp"
 #include "timers/TimeManager.hpp"
 
-#define PX_LOG Log
-//---------------------------------
+//-------DEPENDECIES------------------------
+#include <glad.h>
+#include <GLFW/glfw3.h>
 
-//-------GRAPHICS----------------------
+//-------MATH-------------------------------
+#include <glm/gtc/matrix_transform.hpp>
+
+
+//-------END CORE---------------------------
+
+
+
+//-------GRAPHICS---------------------------
 #include "system.hpp"
-#define PX System
 
+//-------RENDERER---------------------------
 #include "renderer/shader.hpp"
+#include "renderer/camera.hpp"
 
-//GRAPHICS CORE
-#include "renderer/core/VertexArray.hpp"
-#include "renderer/core/VertexBuffer.hpp"
-#include "renderer/core/VertexBufferLayout.hpp"
-#include "renderer/core/IndexBuffer.hpp"
+//-------RENDERER CORE----------------------
 #include "renderer/core/Textures.hpp"
+#include "renderer/core/Mesh.hpp"
 
-//GRAPHICS PRIMITIVES
+//-------RENDERER PRIMITIVES----------------
+#include "renderer/primitives/Line.hpp"
+#include "renderer/primitives/Circle.hpp"
+
 #include "renderer/primitives/Cube.hpp"
-//---------------------------------
+#include "renderer/primitives/Sphere.hpp"
+
+
+//-------END GRAPHICS-----------------------

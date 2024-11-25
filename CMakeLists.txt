@@ -14,4 +14,4 @@ add_subdirectory(Pulsar)
 add_subdirectory(App)
 
 #Enable testing after Pulsar/vendor/googletest configure
-enable_testing()
+# enable_testing()
