@@ -16,6 +16,9 @@ struct SinglePendulum{
 
     SinglePendulum(float x0, float y0, double m, double l, double init_theta, double init_thetadot);
 
+    double getKinematicEnergy();
+    double getPotencialEnergy();
+
     void displayParameters();
   
 };
@@ -40,7 +43,6 @@ struct DoublePendulum{
 
     double getPotencialEnergy();
     double getKinematicEnergy();
-    double getEnergy();
 
     void displayParameters();
 

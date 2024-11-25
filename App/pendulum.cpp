@@ -21,6 +21,14 @@ void SinglePendulum::displayParameters(){
 
 }
 
+double SinglePendulum::getKinematicEnergy(){
+     return (0.5 * m * pow(l,2) * pow(thetadot,2));
+}
+
+double SinglePendulum::getPotencialEnergy(){
+     return ( m * g * l * (1 - cos(theta)));
+}
+
 
 DoublePendulum::DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,double init_theta2,double init_thetadot1, double init_thetadot2)
 :m1(m1), m2(m2), l1(l1), l2(l2),theta1(glm::radians(init_theta1)), theta2(glm::radians(init_theta2)), thetadot1(init_thetadot1), thetadot2(init_thetadot2), x0(x0), y0(y0)
@@ -43,7 +51,7 @@ double DoublePendulum::getKinematicEnergy(){
 }
 
 double DoublePendulum::getPotencialEnergy(){
-    return (   (-1.0 * m1 * g * l1 * cos(theta1)) - ( m1 * g * ( (l1 * cos(theta1)) + (l2 * cos(theta2)) ) )
+    return (   (-1.0 * m1 * g * l1 * cos(theta1)) - ( m2 * g * ( (l1 * cos(theta1)) + (l2 * cos(theta2)) ) )
              
              );
 }

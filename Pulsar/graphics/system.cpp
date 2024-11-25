@@ -125,6 +125,10 @@ void System::InitUI(){
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+    float scale = 1.25f;
+    io.FontGlobalScale = scale; 
+    ImGui::GetStyle().ScaleAllSizes(scale);
+
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowGLFW(), true);

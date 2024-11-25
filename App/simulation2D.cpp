@@ -4,11 +4,6 @@
 #include "Pulsar.hpp"
 #include "iostream"
 
-//Shader code paths
-#define CIRCLE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/circle.shader"
-#define LINE_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/line.shader"
-#define TRAIL_SHADER "/home/marek/Dev/Projects/pulsarEngine/res/shaders/trail.shader"
-
 //Window resolution
 static unsigned int Width = 1600;
 static unsigned int Height = 900;
@@ -41,7 +36,6 @@ void updatePlotData(double newData, double* dataArray, size_t dataSize){
     dataArray[dataSize - 1] = newData;
 
 }
-
 
 void Simulation2D::initialize(){
 
@@ -82,25 +76,35 @@ void Simulation2D::run(){
         int pendulumNumericEqIndex2 = 0;
 
         bool isSimulationRunning = false;
-
+        
     /*
         TODO - OPTIMIZE THIS!!!!!!!!!!!!
     */
 
         //ImPlot parameters for plots
-        double t_data[1000] = {0.0};
+
         //Single Pendulum data
+        double t_data[1000] = {0.0};
+
         double theta_data[1000] = {0.0};
         double thetadot_data[1000] = {0.0};
+        
+        double Ep_data[1000] = {0.0};
+        double Ek_data[1000] = {0.0};
+        double Ec_data[1000] = {0.0};
+        
         //Double Pendulum data
         double t2_data[1000] = {0.0};
+
         double theta1_data[1000] = {0.0};
         double thetadot1_data[1000] = {0.0};
         double theta2_data[1000] = {0.0};
         double thetadot2_data[1000] = {0.0};
-        double Ep_data[1000] = {0.0};
-        double Ek_data[1000] = {0.0};
-        double Ec_data[1000] = {0.0};
+
+        double Ep2_data[1000] = {0.0};
+        double Ek2_data[1000] = {0.0};
+        double Ec2_data[1000] = {0.0};
+
     /*
     ==============================================================    
                     DATA CONFIGURATION 
@@ -234,17 +238,24 @@ void Simulation2D::run(){
 
                 switch (pendulumNumericEqIndex)
                 {
-                    case 0: printf("Simulation - Approx\n"); SimulatePendulumApprox(single); break;
-                    case 1: printf("Simulation - Euler Method\n"); SimulatePendulumEuler(single); break;
-                    case 2: printf("Simulation - Heun's method (Modified Euler Method)\n"); SimulatePendulumHeun(single); break;
-                    case 3: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(single); break;
-                    default: printf("Simulation - None\n"); break;
+                    case 0: SimulatePendulumApprox(single); break;
+                    case 1: SimulatePendulumEuler(single); break;
+                    case 2: SimulatePendulumHeun(single); break;
+                    case 3: SimulatePendulumRK4(single); break;
+                    default: break;
                 }
 
                                 
                 updatePlotData(t_data[999] + dt, t_data, 1000);
                 updatePlotData(single.theta, theta_data, 1000);
                 updatePlotData(single.thetadot, thetadot_data, 1000);
+
+                double pot = single.getPotencialEnergy();
+                double kin = single.getKinematicEnergy();
+                
+                updatePlotData(pot, Ep_data, 1000);
+                updatePlotData(kin, Ek_data, 1000);
+                updatePlotData(kin + pot, Ec_data, 1000);
                
 
                 /*
@@ -274,10 +285,10 @@ void Simulation2D::run(){
 
                 switch (pendulumNumericEqIndex2)
                 {
-                    case 0: printf("Simulation - Euler Method\n");  SimulatePendulumEuler(pendulum);; break;
-                    case 1: printf("Simulation - Heun's method (Modified Euler Method)\n"); SimulatePendulumHeun(pendulum); break;
-                    case 2: printf("Simulation - Runge-Kutta Method (RK4)\n"); SimulatePendulumRK4(pendulum); break;
-                    default: printf("Simulation - None\n"); break;
+                    case 0: SimulatePendulumEuler(pendulum);; break;
+                    case 1: SimulatePendulumHeun(pendulum); break;
+                    case 2: SimulatePendulumRK4(pendulum); break;
+                    default: break;
                 }
 
                 updatePlotData(t2_data[999] + dt, t2_data, 1000);
@@ -289,9 +300,9 @@ void Simulation2D::run(){
                 double pot = pendulum.getPotencialEnergy();
                 double kin = pendulum.getKinematicEnergy();
                 
-                updatePlotData(pot, Ep_data, 1000);
-                updatePlotData(kin, Ek_data, 1000);
-                updatePlotData(kin + pot, Ec_data, 1000);
+                updatePlotData(pot, Ep2_data, 1000);
+                updatePlotData(kin, Ek2_data, 1000);
+                updatePlotData(kin + pot, Ec2_data, 1000);
 
               
 
@@ -388,8 +399,21 @@ void Simulation2D::run(){
             ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
             ImGui::Begin("Panel");
 
+            if (ImGui::Button("Start")){ isSimulationRunning = true; }
+            ImGui::SameLine();
+            if (ImGui::Button("Stop")){ isSimulationRunning = false; }
+            ImGui::SameLine();
+            if (ImGui::Button("Reset")){
+
+                if(pendulumTypesIndex == 0)
+                    ResetPendulum(single);
+                if(pendulumTypesIndex == 1)
+                    ResetPendulum(pendulum);
+            }
+
             if (ImGui::Combo("Choose pendulum", &pendulumTypesIndex, pendulumTypes, IM_ARRAYSIZE(pendulumTypes))) {
                 printf("Selected: %s\n", pendulumTypes[pendulumTypesIndex]);
+                
             }
 
             //Single pendulum
@@ -400,13 +424,17 @@ void Simulation2D::run(){
                 }
 
                 ImGui::PushID(0);
-                // ImGui::SliderFloat("Rod length", &single.l, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Thetha (radians)", &single.theta, 0.0f , 2 * M_PI);
+
+                ImGui::Text("Change parameters");
+                ImGui::InputDouble("Mass", &single.m, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Rod length", &single.l, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha", &single.theta, 0.01, 3.0, "%.2f");
+       
 
                 ImGui::Text("Actual data");
+                ImGui::BulletText("Mass: %f", single.m);
                 ImGui::BulletText("Rod length: %f", single.l);
                 ImGui::BulletText("Thetha (radians): %f", single.theta);
-                ImGui::BulletText("Position (x,y): %f, %f", single.x , single.y);
                 ImGui::BulletText("Angular velocity: %f", single.thetadot);
 
                 ImGui::PopID();
@@ -418,9 +446,9 @@ void Simulation2D::run(){
                 }
 
                 if (ImPlot::BeginPlot("Energy")) {
-                    // ImPlot::PlotLine("Ep", t_data, theta1_data, 1000);
-                    // ImPlot::PlotLine("Ek ", t_data, thetadot1_data, 1000);
-                    // ImPlot::PlotLine("Ec ", t_data, thetadot1_data, 1000);
+                    ImPlot::PlotLine("Ep", t_data, Ep_data, 1000);
+                    ImPlot::PlotLine("Ek ", t_data, Ek_data, 1000);
+                    ImPlot::PlotLine("Ec ", t_data, Ec_data, 1000);
                     ImPlot::EndPlot();
                 }
 
@@ -435,22 +463,21 @@ void Simulation2D::run(){
 
                 ImGui::PushID(0);
 
-                // ImGui::Text("Change parameters");
-                // ImGui::SliderScalar("l1", ImGuiDataType_Double, &pendulum.l1, &minl1, &maxl1, "%.2f");
-                // ImGui::SliderFloat("Rod 1 length", &pendulum.l1, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Rod 2 length", &pendulum.l2, 0.0f , 300.0f);
-                // ImGui::SliderFloat("Thetha 1 (radians)", &pendulum.theta1, 0.0f , 2 * M_PI);
-                // ImGui::SliderFloat("Thetha 2 (radians)", &pendulum.theta2, 0.0f , 2 * M_PI);
+                ImGui::Text("Change parameters");
+                ImGui::InputDouble("Rod length", &pendulum.l1, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Rod length", &pendulum.l2, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha 1", &pendulum.theta1, 0.01, 3.0, "%.2f");
+                ImGui::InputDouble("Thetha 2", &pendulum.theta2, 0.01, 3.0, "%.2f");
 
 
                 ImGui::Text("Actual data");
-                ImGui::BulletText("Rod length 1: %f", pendulum.l1);
+                ImGui::BulletText("Mass 1: %f", pendulum.m1); ImGui::SameLine();
+                ImGui::BulletText("Mass 2: %f", pendulum.m2);
+                ImGui::BulletText("Rod length 1: %f", pendulum.l1); ImGui::SameLine();
                 ImGui::BulletText("Rod length 2: %f", pendulum.l2);
-                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1);
+                ImGui::BulletText("Thetha 1 (radians): %f", pendulum.theta1); ImGui::SameLine();
                 ImGui::BulletText("Thetha 2 (radians): %f", pendulum.theta2);
-                ImGui::BulletText("Position 1 (x,y): %f, %f", pendulum.x1 , pendulum.y1);
-                ImGui::BulletText("Position 2 (x,y): %f, %f", pendulum.x2  , pendulum.y2);
-                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);
+                ImGui::BulletText("Angular velocity 1 : %f", pendulum.thetadot1);ImGui::SameLine();
                 ImGui::BulletText("Angular velocity 2 : %f", pendulum.thetadot2);
 
                 ImGui::PopID();
@@ -465,24 +492,13 @@ void Simulation2D::run(){
                 }
 
                 if (ImPlot::BeginPlot("Energy")) {
-                    ImPlot::PlotLine("Ep", t2_data, Ep_data, 1000);
-                    ImPlot::PlotLine("Ek ", t2_data, Ek_data, 1000);
-                    ImPlot::PlotLine("Ec ", t2_data, Ec_data, 1000);
+                    ImPlot::PlotLine("Ep", t2_data, Ep2_data, 1000);
+                    ImPlot::PlotLine("Ek ", t2_data, Ek2_data, 1000);
+                    ImPlot::PlotLine("Ec ", t2_data, Ec2_data, 1000);
                     ImPlot::EndPlot();
                 }
             }
 
-            if (ImGui::Button("Start")){ isSimulationRunning = true; }
-            ImGui::SameLine();
-            if (ImGui::Button("Stop")){ isSimulationRunning = false; }
-            ImGui::SameLine();
-            if (ImGui::Button("Reset")){
-
-                if(pendulumTypesIndex == 0)
-                    ResetPendulum(single);
-                if(pendulumTypesIndex == 1)
-                    ResetPendulum(pendulum);
-            }
 
             ImGui::End();
         gui->OnEnd();
