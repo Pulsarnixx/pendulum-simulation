@@ -23,9 +23,9 @@ libxkbcommon-dev wayland-protocols extra-cmake-modules
 
 Follow these steps to build and run the program:
 
-1. **Clone the repository**:
+1. **Clone the repository with git modules**:
    ```bash
-   git clone https://github.com/Pulsarnixx/pulsarEngine.git
+   git clone --recurse-submodules https://github.com/Pulsarnixx/pulsarEngine.git
    ```
 2. **Go to repository and run bash script**:
    ```bash
