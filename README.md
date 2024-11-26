@@ -29,6 +29,7 @@ Follow these steps to build and run the program:
    ```
 2. **Go to repository and run bash script**:
    ```bash
+   cd pendulum-simulation
    ./config.sh run
    ```
  ## 📄 License
