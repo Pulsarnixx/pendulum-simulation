@@ -1,8 +1,9 @@
 #include "simulation2D.hpp"
 #include "numerical_eq.hpp"
-// #include "simulation3D.hpp"
 
 #include <memory>
+
+#undef DEBUG
 
 int main(){
 
@@ -11,7 +12,9 @@ int main(){
     /*
         NUMERICAL TESTS FIRST
     */
+#ifdef DEBUG
     RunTests();
+#endif
 
     /*
         SIMULATION APP

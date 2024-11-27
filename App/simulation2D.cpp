@@ -75,11 +75,10 @@ void Simulation2D::run(){
         const char* pendulumNumericEq2[] = { "Euler Method", "Heun's method (Modified Euler Method)", "Runge-Kutta Method (RK4)"};
         int pendulumNumericEqIndex2 = 0;
 
+        double degrees = 0.0, degrees2 = 0.0, degrees3 = 0.0;
+
         bool isSimulationRunning = false;
-        
-    /*
-        TODO - OPTIMIZE THIS!!!!!!!!!!!!
-    */
+
 
         //ImPlot parameters for plots
 
@@ -218,23 +217,20 @@ void Simulation2D::run(){
         
         FPSTimer::GetTimer()->StartFrame();
 
-
-
         //Event handler - in the future
         window->onEvents();
+
+        /*
+        ==============================================================    
+                            PHYSICS CALCULATION 
+        ==============================================================    
+        */
 
 
         if(isSimulationRunning == true){
 
-
             //Single Pendulum
             if(pendulumTypesIndex == 0){
-
-                /*
-                ==============================================================    
-                                    PHYSICS CALCULATION 
-                ==============================================================    
-                */
 
                 switch (pendulumNumericEqIndex)
                 {
@@ -256,32 +252,16 @@ void Simulation2D::run(){
                 updatePlotData(pot, Ep_data, 1000);
                 updatePlotData(kin, Ek_data, 1000);
                 updatePlotData(kin + pot, Ec_data, 1000);
-               
-
-                /*
-                ==============================================================    
-                                GRAPHICS ADJUSTMENTS
-                ==============================================================    
-                */
-                singleLine.setPositions( xg, yg, 0.0f, xg + (single.x * scaleX), yg + (single.y * scaleY), 0.0f);
-                singleLineMesh.UpdateData(singleLine.getVerticesArrayData(), singleLine.getVerticesArraySize());
-
-                singleCircle.generatePoints(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
-                singleCircleMesh.UpdateData(singleCircle.getVerticesArrayData(), singleCircle.getVerticesArraySize());
 
 
+                //Trails data
                 updateTrailData(xg + (single.x * scaleX), yg + (single.y * scaleY), trailPositions, 10000);
                 trailPositionsVBO.UpdateData(trailPositions, 10000 * 2 * sizeof(float));
+               
             }
 
             //Double Pendulum
             if(pendulumTypesIndex == 1){
-
-                /*
-                ==============================================================    
-                                    PHYSICS CALCULATION 
-                ==============================================================    
-                */
 
                 switch (pendulumNumericEqIndex2)
                 {
@@ -304,14 +284,37 @@ void Simulation2D::run(){
                 updatePlotData(kin, Ek2_data, 1000);
                 updatePlotData(kin + pot, Ec2_data, 1000);
 
-              
+                //Trails data
+                updateTrailData(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), doubleTrailPostions, 10000);
+                doubleTrailPostionsVBO.UpdateData(doubleTrailPostions, 10000 * 2 * sizeof(float));
 
-                /*
-                ==============================================================    
-                                GRAPHICS ADJUSTMENTS
-                ==============================================================    
-                */
+                updateTrailData(xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), doubleTrailPostions2, 10000);
+                doubleTrailPostionsVBO2.UpdateData(doubleTrailPostions2, 10000 * 2 * sizeof(float));
 
+     
+            }
+
+        }
+
+        /*
+        ==============================================================    
+                        GRAPHICS ADJUSTMENTS
+        ==============================================================    
+        */
+
+        if(pendulumTypesIndex == 0){
+
+                singleLine.setPositions( xg, yg, 0.0f, xg + (single.x * scaleX), yg + (single.y * scaleY), 0.0f);
+                singleLineMesh.UpdateData(singleLine.getVerticesArrayData(), singleLine.getVerticesArraySize());
+
+                singleCircle.generatePoints(xg + (single.x * scaleX), yg + (single.y * scaleY), 25.0f, segments);
+                singleCircleMesh.UpdateData(singleCircle.getVerticesArrayData(), singleCircle.getVerticesArraySize());
+
+
+
+        }
+
+        if(pendulumTypesIndex == 1){
 
                 doubleLine1.setPositions(xg, yg, 0.0f, xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), 0.0f);
                 doubleLine1Mesh.UpdateData(doubleLine1.getVerticesArrayData(), doubleLine1.getVerticesArraySize());
@@ -326,15 +329,6 @@ void Simulation2D::run(){
 
                 circleMesh1.UpdateData(circle1.getVerticesArrayData(), circle1.getVerticesArraySize());
                 circleMesh2.UpdateData(circle2.getVerticesArrayData(), circle2.getVerticesArraySize());
-
-                updateTrailData(xg + (pendulum.x1 * scaleX), yg + (pendulum.y1 * scaleY), doubleTrailPostions, 10000);
-                doubleTrailPostionsVBO.UpdateData(doubleTrailPostions, 10000 * 2 * sizeof(float));
-
-                updateTrailData(xg + (pendulum.x2 * scaleX), yg + (pendulum.y2 * scaleY), doubleTrailPostions2, 10000);
-                doubleTrailPostionsVBO2.UpdateData(doubleTrailPostions2, 10000 * 2 * sizeof(float));
-
-            }
-
         }
 
 
@@ -405,10 +399,19 @@ void Simulation2D::run(){
             ImGui::SameLine();
             if (ImGui::Button("Reset")){
 
-                if(pendulumTypesIndex == 0)
-                    ResetPendulum(single);
-                if(pendulumTypesIndex == 1)
-                    ResetPendulum(pendulum);
+                if(pendulumTypesIndex == 0){
+                    single.ResetValues();
+                    single.UpdateCartesianCoordinates();
+                    std::fill(&trailPositions[0], &trailPositions[(10000 * 2) - 1], 0.0f);
+                }
+                else{
+                    pendulum.ResetValues();
+                    pendulum.UpdateCartesianCoordinates();
+                    std::fill(&doubleTrailPostions[0], &doubleTrailPostions[(10000 * 2) - 1], 0.0f);
+                    std::fill(&doubleTrailPostions2[0], &doubleTrailPostions2[(10000 * 2) - 1], 0.0f);
+                }
+
+                isSimulationRunning = false;
             }
 
             if (ImGui::Combo("Choose pendulum", &pendulumTypesIndex, pendulumTypes, IM_ARRAYSIZE(pendulumTypes))) {
@@ -427,8 +430,14 @@ void Simulation2D::run(){
 
                 ImGui::Text("Change parameters");
                 ImGui::InputDouble("Mass", &single.m, 0.01, 3.0, "%.2f");
-                ImGui::InputDouble("Rod length", &single.l, 0.01, 3.0, "%.2f");
-                ImGui::InputDouble("Thetha", &single.theta, 0.01, 3.0, "%.2f");
+
+                if(ImGui::InputDouble("Rod length", &single.l, 0.01, 3.0, "%.2f"))
+                    single.UpdateCartesianCoordinates();
+                if (ImGui::InputDouble("Theta (degrees)", &degrees, 0.0, 360.0, "%.2f")) {
+                    single.theta = glm::radians(degrees);
+                    single.UpdateCartesianCoordinates();
+                }
+
        
 
                 ImGui::Text("Actual data");
@@ -460,14 +469,22 @@ void Simulation2D::run(){
                 if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex2, pendulumNumericEq2, IM_ARRAYSIZE(pendulumNumericEq2))) {
                     printf("Selected: %s\n", pendulumNumericEq2[pendulumNumericEqIndex2]);
                 }
-
+                
                 ImGui::PushID(0);
 
                 ImGui::Text("Change parameters");
-                ImGui::InputDouble("Rod length", &pendulum.l1, 0.01, 3.0, "%.2f");
-                ImGui::InputDouble("Rod length", &pendulum.l2, 0.01, 3.0, "%.2f");
-                ImGui::InputDouble("Thetha 1", &pendulum.theta1, 0.01, 3.0, "%.2f");
-                ImGui::InputDouble("Thetha 2", &pendulum.theta2, 0.01, 3.0, "%.2f");
+                if(ImGui::InputDouble("Rod length 1", &pendulum.l1, 0.01, 3.0, "%.2f") || ImGui::InputDouble("Rod length 2", &pendulum.l2, 0.01, 5.0, "%.2f")){
+                      pendulum.UpdateCartesianCoordinates();
+                }
+            
+                if (ImGui::InputDouble("Theta 1 (degrees)", &degrees2, 0.0, 360.0, "%.2f")) {
+                    pendulum.theta1 = glm::radians(degrees2);
+                    pendulum.UpdateCartesianCoordinates();
+                }
+                if (ImGui::InputDouble("Theta 2 (degrees)", &degrees3, 0.0, 360.0, "%.2f")) {
+                    pendulum.theta2 = glm::radians(degrees3);
+                    pendulum.UpdateCartesianCoordinates();
+                }
 
 
                 ImGui::Text("Actual data");
