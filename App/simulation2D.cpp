@@ -469,7 +469,7 @@ void Simulation2D::run(){
                 if (ImGui::Combo("Numerical method", &pendulumNumericEqIndex2, pendulumNumericEq2, IM_ARRAYSIZE(pendulumNumericEq2))) {
                     printf("Selected: %s\n", pendulumNumericEq2[pendulumNumericEqIndex2]);
                 }
-`
+                
                 ImGui::PushID(0);
 
                 ImGui::Text("Change parameters");
