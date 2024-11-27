@@ -14,7 +14,7 @@ Before running the project, make sure you have the following tools and packages 
 
 To install all dependecies try this command:
 ```bash
-sudo apt-get install build-essential cmake xorg-dev libwayland-dev
+sudo apt-get install -y build-essential git cmake xorg-dev libwayland-dev
 libxkbcommon-dev wayland-protocols extra-cmake-modules
 ```
 ---
@@ -29,8 +29,7 @@ Follow these steps to build and run the program:
    ```
 2. **Go to repository and run bash script**:
    ```bash
-   cd pendulum-simulation
-   ./config.sh run
+   cd pendulum-simulation && ./config.sh run
    ```
  ## 📄 License
  This project is licensed under the MIT License. Third party dependency used by this software and described in License file.
