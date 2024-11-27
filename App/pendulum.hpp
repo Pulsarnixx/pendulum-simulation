@@ -14,12 +14,17 @@ struct SinglePendulum{
     float x0,y0;
     float x,y;
 
+    //Save initial values
+    double init_theta;
+    double init_thetadot;
+
     SinglePendulum(float x0, float y0, double m, double l, double init_theta, double init_thetadot);
 
     double getKinematicEnergy();
     double getPotencialEnergy();
 
-    void displayParameters();
+    void ResetValues();
+    void UpdateCartesianCoordinates();
   
 };
 
@@ -38,19 +43,25 @@ struct DoublePendulum{
     float x1,y1;
     float x2,y2;
 
+
+    //Save initial values;
+    double init_theta1;
+    double init_thetadot1;
+    double init_theta2;
+    double init_thetadot2;
+
+
     DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,
                     double init_theta2,double init_thetadot1, double init_thetadot2);
 
     double getPotencialEnergy();
     double getKinematicEnergy();
 
-    void displayParameters();
+    void ResetValues();
+    void UpdateCartesianCoordinates();
 
 
 };
-
-void ResetPendulum(SinglePendulum& pendulum);
-void ResetPendulum(DoublePendulum& pendulum);
 
 /*
     Single Pendulum

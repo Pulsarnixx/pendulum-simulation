@@ -13,13 +13,25 @@ SinglePendulum::SinglePendulum(float x0, float y0, double m, double l, double in
     //Calculate initial cartesian coordinates based on polar coordinates values
     x = x0 + ( l * sin(theta));
     y = y0 - ( l * cos(theta));
+
+    //Save initial values;
+    this->init_theta = glm::radians(init_theta);
+    this->init_thetadot = glm::radians(init_thetadot);
+
 }
 
-void SinglePendulum::displayParameters(){
+void SinglePendulum::ResetValues(){
 
-    std::cout << "Single Pendulum parameters: \n";
-
+    theta = init_theta;
+    thetadot = init_thetadot;
 }
+
+void SinglePendulum::UpdateCartesianCoordinates(){
+
+    x = x0 + ( l * sin(theta));
+    y = y0 - ( l * cos(theta));
+}
+
 
 double SinglePendulum::getKinematicEnergy(){
      return (0.5 * m * pow(l,2) * pow(thetadot,2));
@@ -28,6 +40,8 @@ double SinglePendulum::getKinematicEnergy(){
 double SinglePendulum::getPotencialEnergy(){
      return ( m * g * l * (1 - cos(theta)));
 }
+
+
 
 
 DoublePendulum::DoublePendulum( float x0, float y0, double m1, double m2, double l1, double l2, double init_theta1,double init_theta2,double init_thetadot1, double init_thetadot2)
@@ -40,6 +54,13 @@ DoublePendulum::DoublePendulum( float x0, float y0, double m1, double m2, double
 
     x2 = x0 + (  l1 * sin(theta1)) + (  l2 * sin(theta2));
     y2 = y0 - (  l1 * cos(theta1)) - (  l2 * cos(theta2));
+
+    //Save initial values;
+    this->init_theta1 = glm::radians(init_theta1);
+    this->init_thetadot1 = glm::radians(init_thetadot1);
+    this->init_theta2 = glm::radians(init_theta2);
+    this->init_thetadot2 = glm::radians(init_thetadot2);
+
 
 }
 
@@ -56,16 +77,30 @@ double DoublePendulum::getPotencialEnergy(){
              );
 }
 
-void DoublePendulum::displayParameters(){
+void DoublePendulum::ResetValues(){
 
-    std::cout << "Double Pendulum parameters: \n";
+    theta1 = init_theta1;
+    thetadot1 = init_thetadot1;
+    theta2 = init_theta2;
+    thetadot2 = init_thetadot2;
 
 }
 
-void ResetPendulum(SinglePendulum& pendulum){}
+void DoublePendulum::UpdateCartesianCoordinates(){
 
-void ResetPendulum(DoublePendulum& pendulum){}
+    x1 = x0 + ( l1 * sin(theta1));
+    y1 = y0 - ( l1 * cos(theta1));
 
+    x2 = x0 + (  l1 * sin(theta1)) + (  l2 * sin(theta2));
+    y2 = y0 - (  l1 * cos(theta1)) - (  l2 * cos(theta2));
+}
+
+
+/*
+===============================================================
+        Single Pendulum numerical calculations
+===============================================================
+*/
 void SimulatePendulumApprox(SinglePendulum& pendulum){
 
     //Calculate properties in polar coordinates
@@ -136,7 +171,9 @@ void SimulatePendulumRK4(SinglePendulum& pendulum){
 }
 
 /*
-    Helpfull functions for double pendulum calculation
+===============================================================
+        Double Pendulum numerical calculations
+===============================================================
 */
 
 double calculateThetaddot2(double l1, double l2, double m1, double m2, double theta1, double theta2, double thetadot1, double thetadot2){
@@ -190,9 +227,6 @@ void SimulatePendulumEuler(DoublePendulum& pendulum){
     pendulum.y2 = pendulum.y0 - ( pendulum.l1 * cos(pendulum.theta1)) - ( pendulum.l2 * cos(pendulum.theta2));
 }
 
-/*
-    Posible to not create another double variables
-*/
 void SimulatePendulumHeun(DoublePendulum& pendulum){
 
     //Calculate thetaddots for k1
