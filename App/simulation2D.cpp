@@ -366,10 +366,10 @@ void Simulation2D::run(){
             trailShader.Bind();
             doubleTrailPostionsVAO.Bind();
             trailShader.SetUniform4f("u_color", 1.0f, 0.784f, 0.341f, 1.0f);
-            glPointSize(2.5f);
+            glPointSize(3.5f);
             glDrawArrays(GL_POINTS, 0, 10000);
             doubleTrailPostionsVAO2.Bind();
-            trailShader.SetUniform4f("u_color", 1.0f, 0.902f, 0.502f, 1.0f);
+            trailShader.SetUniform4f("u_color", 1.0f, 0.0f, 0.0f, 1.0f);
             glDrawArrays(GL_POINTS, 0, 10000);
 
             /* RENDER LINES */
