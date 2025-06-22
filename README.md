@@ -3,6 +3,11 @@
 The project for an engineering thesis at the Wroclaw University of Technology. 
 For this purpose, I wrote a basic graphics engine based on GLFW and OpenGL and a pendulum motion simulation application based on it.
 ---
+
+## 🎥 Demo
+
+![Demo](docs/simulation.gif)
+
 ## 📋 Requirements
 
 The code was written with modern Debian/Ubuntu systems in mind.

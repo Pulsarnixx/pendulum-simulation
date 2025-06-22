@@ -130,20 +130,20 @@ void System::InitUI(){
     ImGui::GetStyle().ScaleAllSizes(scale);
 
     //ImGui
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
-    style.Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); 
-    style.Colors[ImGuiCol_PopupBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
-    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);  
-    style.Colors[ImGuiCol_Header] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);  
-    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.7f, 0.7f, 0.7f, 1.0f);
-    style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
+    // ImGuiStyle& style = ImGui::GetStyle();
+    // style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
+    // style.Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); 
+    // style.Colors[ImGuiCol_PopupBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
+    // style.Colors[ImGuiCol_FrameBg] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);  
+    // style.Colors[ImGuiCol_Header] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);  
+    // style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.7f, 0.7f, 0.7f, 1.0f);
+    // style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
 
-    //ImPlot 
-    ImPlotStyle& plotStyle = ImPlot::GetStyle();
-    plotStyle.Colors[ImPlotCol_LegendBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
-    plotStyle.Colors[ImPlotCol_LegendText] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-    plotStyle.Colors[ImPlotCol_LegendBorder] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); 
+    // //ImPlot 
+    // ImPlotStyle& plotStyle = ImPlot::GetStyle();
+    // plotStyle.Colors[ImPlotCol_LegendBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  
+    // plotStyle.Colors[ImPlotCol_LegendText] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    // plotStyle.Colors[ImPlotCol_LegendBorder] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); 
 
 
     // Setup Platform/Renderer backends
